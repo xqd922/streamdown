@@ -1,5 +1,5 @@
 ---
-"streamdown": minor
+"streamdown": patch
 ---
 
 Add support for copying table data as Markdown in TableCopyDropdown.

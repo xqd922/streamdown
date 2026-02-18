@@ -77,19 +77,6 @@ Streamdown can be configured to suit your needs. This guide will walk you throug
   }}
 />
 
-## CDN Props
-
-<TypeTable
-  type={{
-    cdnUrl: {
-      description:
-        "Base URL for loading Shiki languages/themes, Mermaid, and KaTeX CSS. Set to null to disable CDN loading (only bundled languages/themes will work, Mermaid will not load). See Self-Hosting CDN for self-hosting.",
-      type: "string | null",
-      default: "'https://streamdown.ai/cdn'",
-    },
-  }}
-/>
-
 ## Plugin Props
 
 <TypeTable
@@ -131,6 +118,23 @@ Math rendering and CJK support require installing separate plugins. See [Mathema
       description: "Control visibility of interactive buttons",
       type: "ControlsConfig",
       default: "true",
+    },
+    animated: {
+      description: "Enable character-by-character animation for streaming content. See [Animation](/docs/animation).",
+      type: "boolean | AnimateOptions",
+    },
+    linkSafety: {
+      description: "Configure link safety modals for external URLs. See [Link Safety](/docs/link-safety).",
+      type: "LinkSafetyConfig",
+      default: "{ enabled: true }",
+    },
+    plugins: {
+      description: "Plugin configuration for math, mermaid, code highlighting, and CJK support. See [Plugins](/docs/plugins).",
+      type: "PluginConfig",
+    },
+    caret: {
+      description: "Show a caret indicator at the end of streaming content. See [Carets](/docs/carets).",
+      type: '"block" | "circle"',
     },
   }}
 />
@@ -327,6 +331,16 @@ The `remend` prop configures which Markdown completions are performed during str
     },
     setextHeadings: {
       description: "Handle incomplete setext headings",
+      type: "boolean",
+      default: "true",
+    },
+    comparisonOperators: {
+      description: "Escape > as comparison operators in list items",
+      type: "boolean",
+      default: "true",
+    },
+    htmlTags: {
+      description: "Strip incomplete HTML tags at end of streaming text",
       type: "boolean",
       default: "true",
     },

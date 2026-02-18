@@ -289,24 +289,19 @@ export default function Page() {
 
 ### Disable Math Support
 
-If you don't need math support, you can exclude the plugins:
+Math rendering is not included by default — it requires the `@streamdown/math` plugin. To disable math support, omit the math plugin from your configuration:
 
 ```tsx
 import { Streamdown } from 'streamdown';
 
 export default function Page() {
   return (
-    <Streamdown
-      remarkPlugins={[]} // Removes remark-math
-      rehypePlugins={[]} // Removes rehype-katex
-    >
+    <Streamdown>
       {markdown}
     </Streamdown>
   );
 }
 ```
-
-Note: This will remove all default plugins, so you'll need to add back any others you need.
 
 ## Streaming Considerations
 

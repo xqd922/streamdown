@@ -84,29 +84,53 @@ export const CodeBlockBody = memo(
               // biome-ignore lint/suspicious/noArrayIndexKey: "This is a stable key."
               key={index}
             >
-              {row.map((token, tokenIndex) => (
-                <span
-                  className={cn(
-                    "text-[var(--sdm-c,inherit)]",
-                    "dark:text-[var(--shiki-dark,var(--sdm-c,inherit))]",
-                    token.bgColor && "bg-[var(--sdm-tbg)]",
-                    token.bgColor &&
-                      "dark:bg-[var(--shiki-dark-bg,var(--sdm-tbg))]"
-                  )}
-                  // biome-ignore lint/suspicious/noArrayIndexKey: "This is a stable key."
-                  key={tokenIndex}
-                  style={
-                    {
-                      ...(token.color ? { "--sdm-c": token.color } : {}),
-                      ...(token.bgColor ? { "--sdm-tbg": token.bgColor } : {}),
-                      ...token.htmlStyle,
-                    } as CSSProperties
+              {row.map((token, tokenIndex) => {
+                // Shiki dual-theme tokens put direct CSS properties (color,
+                // background-color) into htmlStyle alongside CSS custom
+                // properties (--shiki-dark, etc). Direct properties as inline
+                // styles override the Tailwind class-based dark mode approach,
+                // so we redirect them to CSS custom properties instead.
+                const tokenStyle: Record<string, string> = {};
+                let hasBg = Boolean(token.bgColor);
+
+                if (token.color) {
+                  tokenStyle["--sdm-c"] = token.color;
+                }
+                if (token.bgColor) {
+                  tokenStyle["--sdm-tbg"] = token.bgColor;
+                }
+
+                if (token.htmlStyle) {
+                  for (const [key, value] of Object.entries(token.htmlStyle)) {
+                    if (key === "color") {
+                      tokenStyle["--sdm-c"] = value;
+                    } else if (key === "background-color") {
+                      tokenStyle["--sdm-tbg"] = value;
+                      hasBg = true;
+                    } else {
+                      tokenStyle[key] = value;
+                    }
                   }
-                  {...token.htmlAttrs}
-                >
-                  {token.content}
-                </span>
-              ))}
+                }
+
+                return (
+                  <span
+                    className={cn(
+                      "text-[var(--sdm-c,inherit)]",
+                      "dark:text-[var(--shiki-dark,var(--sdm-c,inherit))]",
+                      hasBg && "bg-[var(--sdm-tbg)]",
+                      hasBg &&
+                        "dark:bg-[var(--shiki-dark-bg,var(--sdm-tbg))]"
+                    )}
+                    // biome-ignore lint/suspicious/noArrayIndexKey: "This is a stable key."
+                    key={tokenIndex}
+                    style={tokenStyle as CSSProperties}
+                    {...token.htmlAttrs}
+                  >
+                    {token.content}
+                  </span>
+                );
+              })}
             </span>
           ))}
         </code>

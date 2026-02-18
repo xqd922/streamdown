@@ -236,7 +236,12 @@ Another paragraph.`;
 </article>`;
 
     const { container } = render(
-      <Streamdown normalizeHtmlIndentation>{content}</Streamdown>
+      <Streamdown
+        normalizeHtmlIndentation
+        allowedTags={{ article: [], header: [], footer: [] }}
+      >
+        {content}
+      </Streamdown>
     );
 
     expect(container.querySelector("h1")?.textContent).toBe("Article Title");

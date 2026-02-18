@@ -1,8 +1,6 @@
 import { SiReact } from "@icons-pack/react-simple-icons";
-import Link from "next/link";
 import type { CSSProperties } from "react";
 import { codeToTokens } from "shiki";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CopyButton } from "./copy-button";
 
@@ -71,88 +69,71 @@ export const Usage = async () => {
   }
 
   return (
-    <section className="space-y-16 py-16">
-      <div className="mx-auto max-w-3xl space-y-4 px-4 text-center sm:px-8">
-        <h2 className="text-pretty font-semibold text-2xl tracking-tighter sm:text-3xl md:text-4xl">
-          Get started in seconds
-        </h2>
-        <p className="text-balance text-muted-foreground sm:text-lg md:text-xl">
-          Install only what you need. Plugins are optional and tree-shakeable
-          for minimal bundle size.
-        </p>
-        <Button asChild variant="outline">
-          <Link href="/docs/getting-started">Read the install guide</Link>
-        </Button>
+    <div className="not-prose overflow-hidden rounded-sm border">
+      <div className="flex items-center gap-2 border-b bg-sidebar py-1.5 pr-1.5 pl-4 text-muted-foreground">
+        <SiReact className="size-4" />
+        <span className="flex-1 font-mono font-normal text-sm tracking-tight">
+          app/chat/page.tsx
+        </span>
+        <CopyButton code={exampleCode} />
       </div>
-      <div className="mx-auto max-w-3xl">
-        <div className="not-prose overflow-hidden rounded-sm border">
-          <div className="flex items-center gap-2 border-b bg-sidebar py-1.5 pr-1.5 pl-4 text-muted-foreground">
-            <SiReact className="size-4" />
-            <span className="flex-1 font-mono font-normal text-sm tracking-tight">
-              app/chat/page.tsx
-            </span>
-            <CopyButton code={exampleCode} />
-          </div>
-          <pre
-            className={cn("overflow-x-auto bg-background py-3 text-sm")}
-            style={
-              {
-                "--sdm-bg": "#fff",
-                ...preStyle,
-              } as CSSProperties
-            }
-          >
-            <code className="grid min-w-max">
-              {tokens.map((line, lineIndex) => (
-                <span className="line px-4" key={lineIndex}>
-                  {line.length > 0 ? (
-                    line.map((token, tokenIndex) => {
-                      const tokenStyle: Record<string, string> = {};
+      <pre
+        className={cn("overflow-x-auto bg-background py-3 text-sm")}
+        style={
+          {
+            "--sdm-bg": "#fff",
+            ...preStyle,
+          } as CSSProperties
+        }
+      >
+        <code className="grid min-w-max">
+          {tokens.map((line, lineIndex) => (
+            <span className="line px-4" key={lineIndex}>
+              {line.length > 0 ? (
+                line.map((token, tokenIndex) => {
+                  const tokenStyle: Record<string, string> = {};
 
-                      if (token.htmlStyle) {
-                        for (const [key, value] of Object.entries(
-                          token.htmlStyle
-                        )) {
-                          if (key === "color" || key === "--shiki-light") {
-                            tokenStyle["--sdm-c"] = value;
-                          } else if (
-                            key === "background-color" ||
-                            key === "--shiki-light-bg"
-                          ) {
-                            tokenStyle["--sdm-tbg"] = value;
-                          } else {
-                            tokenStyle[key] = value;
-                          }
-                        }
+                  if (token.htmlStyle) {
+                    for (const [key, value] of Object.entries(
+                      token.htmlStyle
+                    )) {
+                      if (key === "color" || key === "--shiki-light") {
+                        tokenStyle["--sdm-c"] = value;
+                      } else if (
+                        key === "background-color" ||
+                        key === "--shiki-light-bg"
+                      ) {
+                        tokenStyle["--sdm-tbg"] = value;
+                      } else {
+                        tokenStyle[key] = value;
                       }
+                    }
+                  }
 
-                      const hasBg = Boolean(tokenStyle["--sdm-tbg"]);
+                  const hasBg = Boolean(tokenStyle["--sdm-tbg"]);
 
-                      return (
-                        <span
-                          className={cn(
-                            "text-[var(--sdm-c,inherit)]",
-                            "dark:text-[var(--shiki-dark,var(--sdm-c,inherit))]",
-                            hasBg && "bg-[var(--sdm-tbg)]",
-                            hasBg &&
-                              "dark:bg-[var(--shiki-dark-bg,var(--sdm-tbg))]"
-                          )}
-                          key={tokenIndex}
-                          style={tokenStyle as CSSProperties}
-                        >
-                          {token.content}
-                        </span>
-                      );
-                    })
-                  ) : (
-                    <>{"\n"}</>
-                  )}
-                </span>
-              ))}
-            </code>
-          </pre>
-        </div>
-      </div>
-    </section>
+                  return (
+                    <span
+                      className={cn(
+                        "text-[var(--sdm-c,inherit)]",
+                        "dark:text-[var(--shiki-dark,var(--sdm-c,inherit))]",
+                        hasBg && "bg-[var(--sdm-tbg)]",
+                        hasBg && "dark:bg-[var(--shiki-dark-bg,var(--sdm-tbg))]"
+                      )}
+                      key={tokenIndex}
+                      style={tokenStyle as CSSProperties}
+                    >
+                      {token.content}
+                    </span>
+                  );
+                })
+              ) : (
+                <>{"\n"}</>
+              )}
+            </span>
+          ))}
+        </code>
+      </pre>
+    </div>
   );
 };

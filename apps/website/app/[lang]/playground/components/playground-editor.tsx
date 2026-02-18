@@ -5,8 +5,12 @@ import { code } from "@streamdown/code";
 import { math } from "@streamdown/math";
 import { mermaid } from "@streamdown/mermaid";
 import { SettingsIcon } from "lucide-react";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Streamdown } from "streamdown";
+import {
+  Conversation,
+  ConversationContent,
+} from "@/components/ai-elements/conversation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,7 +18,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -260,15 +263,20 @@ const PlaygroundEditor = () => {
   const [mode, setMode] = useState<"static" | "streaming">("static");
   const [isStreaming, setIsStreaming] = useState(false);
   const [animated, setAnimated] = useState(false);
-  const [animation, setAnimation] = useState<"fadeIn" | "blurIn" | "slideUp">("fadeIn");
+  const [animation, setAnimation] = useState<"fadeIn" | "blurIn" | "slideUp">(
+    "fadeIn"
+  );
   const [animationDuration, setAnimationDuration] = useState(150);
   const [animationEasing, setAnimationEasing] = useState("ease");
   const [animationSep, setAnimationSep] = useState<"word" | "char">("word");
   const [caret, setCaret] = useState<"block" | "circle" | "none">("block");
-  const [chunkSize, setChunkSize] = useState(12);
-  const [chunkDelay, setChunkDelay] = useState(10);
+  const [streamSpeed, setStreamSpeed] = useState(30);
   const streamRef = useRef<ReturnType<typeof setInterval>>(null);
   const indexRef = useRef(0);
+  const tokens = useMemo(
+    () => defaultMarkdown.split(" ").map((token) => `${token} `),
+    []
+  );
 
   const stopStreaming = useCallback(() => {
     if (streamRef.current) {
@@ -285,19 +293,20 @@ const PlaygroundEditor = () => {
     indexRef.current = 0;
     setIsStreaming(true);
 
-    streamRef.current = setInterval(() => {
-      const nextIndex = indexRef.current + chunkSize;
+    let currentContent = "";
 
-      if (nextIndex >= defaultMarkdown.length) {
+    streamRef.current = setInterval(() => {
+      if (indexRef.current >= tokens.length) {
         setMarkdown(defaultMarkdown);
         stopStreaming();
         return;
       }
 
-      indexRef.current = nextIndex;
-      setMarkdown(defaultMarkdown.slice(0, nextIndex));
-    }, chunkDelay);
-  }, [stopStreaming, chunkSize, chunkDelay]);
+      currentContent += tokens[indexRef.current];
+      indexRef.current += 1;
+      setMarkdown(currentContent);
+    }, streamSpeed);
+  }, [stopStreaming, tokens, streamSpeed]);
 
   return (
     <div className="flex h-[calc(100dvh-65px-75px)] flex-col overflow-hidden">
@@ -353,7 +362,9 @@ const PlaygroundEditor = () => {
                         </span>
                         <Select
                           onValueChange={(value) =>
-                            setAnimation(value as "fadeIn" | "blurIn" | "slideUp")
+                            setAnimation(
+                              value as "fadeIn" | "blurIn" | "slideUp"
+                            )
                           }
                           value={animation}
                         >
@@ -373,10 +384,12 @@ const PlaygroundEditor = () => {
                         </span>
                         <Input
                           className="w-24"
-                          min={1}
                           max={2000}
+                          min={1}
                           onChange={(e) =>
-                            setAnimationDuration(Math.max(1, Number(e.target.value)))
+                            setAnimationDuration(
+                              Math.max(1, Number(e.target.value))
+                            )
                           }
                           type="number"
                           value={animationDuration}
@@ -397,7 +410,9 @@ const PlaygroundEditor = () => {
                             <SelectItem value="ease">ease</SelectItem>
                             <SelectItem value="ease-in">ease-in</SelectItem>
                             <SelectItem value="ease-out">ease-out</SelectItem>
-                            <SelectItem value="ease-in-out">ease-in-out</SelectItem>
+                            <SelectItem value="ease-in-out">
+                              ease-in-out
+                            </SelectItem>
                             <SelectItem value="linear">linear</SelectItem>
                           </SelectContent>
                         </Select>
@@ -446,32 +461,17 @@ const PlaygroundEditor = () => {
                 <div className="grid gap-3">
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground text-sm">
-                      Chunk size
+                      Speed (ms)
                     </span>
                     <Input
                       className="w-24"
+                      max={500}
                       min={1}
-                      max={200}
                       onChange={(e) =>
-                        setChunkSize(Math.max(1, Number(e.target.value)))
+                        setStreamSpeed(Math.max(1, Number(e.target.value)))
                       }
                       type="number"
-                      value={chunkSize}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground text-sm">
-                      Delay (ms)
-                    </span>
-                    <Input
-                      className="w-24"
-                      min={1}
-                      max={1000}
-                      onChange={(e) =>
-                        setChunkDelay(Math.max(1, Number(e.target.value)))
-                      }
-                      type="number"
-                      value={chunkDelay}
+                      value={streamSpeed}
                     />
                   </div>
                 </div>
@@ -505,13 +505,17 @@ const PlaygroundEditor = () => {
               Markdown Input
             </span>
           </div>
-          <Textarea
-            className="flex-1 resize-none rounded-none border-0 font-mono text-sm leading-relaxed shadow-none focus-visible:ring-0"
-            onChange={(e) => setMarkdown(e.target.value)}
-            placeholder="Type your markdown here..."
-            spellCheck={false}
-            value={markdown}
-          />
+          <Conversation>
+            <ConversationContent>
+              <Textarea
+                className="flex-1 resize-none rounded-none border-0 font-mono text-sm leading-relaxed shadow-none focus-visible:ring-0"
+                onChange={(e) => setMarkdown(e.target.value)}
+                placeholder="Type your markdown here..."
+                spellCheck={false}
+                value={markdown}
+              />
+            </ConversationContent>
+          </Conversation>
         </div>
 
         <div className="flex w-1/2 flex-col">
@@ -520,21 +524,28 @@ const PlaygroundEditor = () => {
               Streamdown Output
             </span>
           </div>
-          <ScrollArea className="flex-1 overflow-y-auto">
-            <div className="p-6">
-              <div className="mx-auto max-w-prose">
-                <Streamdown
-                  animated={animated ? { animation, duration: animationDuration, easing: animationEasing, sep: animationSep } : false}
-                  caret={caret === "none" ? undefined : caret}
-                  isAnimating={isStreaming}
-                  mode={mode}
-                  plugins={{ code, mermaid, math, cjk }}
-                >
-                  {markdown}
-                </Streamdown>
-              </div>
-            </div>
-          </ScrollArea>
+          <Conversation>
+            <ConversationContent>
+              <Streamdown
+                animated={
+                  animated
+                    ? {
+                        animation,
+                        duration: animationDuration,
+                        easing: animationEasing,
+                        sep: animationSep,
+                      }
+                    : false
+                }
+                caret={caret === "none" ? undefined : caret}
+                isAnimating={isStreaming}
+                mode={mode}
+                plugins={{ code, mermaid, math, cjk }}
+              >
+                {markdown}
+              </Streamdown>
+            </ConversationContent>
+          </Conversation>
         </div>
       </div>
     </div>

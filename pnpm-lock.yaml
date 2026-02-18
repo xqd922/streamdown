@@ -516,6 +516,9 @@ importers:
       mermaid:
         specifier: ^11.12.2
         version: 11.12.2
+      react-dom:
+        specifier: ^19.2.3
+        version: 19.2.3(react@19.2.3)
       react-markdown:
         specifier: ^10.1.0
         version: 10.1.0(@types/react@19.2.8)(react@19.2.3)

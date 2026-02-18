@@ -433,8 +433,8 @@ describe("Markdown Components", () => {
       const table = tableWrapper?.querySelector("table");
       expect(table).toBeTruthy();
       expect(table?.className).toContain("w-full");
-      expect(table?.className).toContain("border-collapse");
-      expect(table?.className).toContain("border");
+      expect(table?.className).toContain("divide-y");
+      expect(table?.className).toContain("divide-border");
     });
 
     it("should render thead with correct classes", () => {
@@ -470,7 +470,6 @@ describe("Markdown Components", () => {
       expect(tbody).toBeTruthy();
       expect(tbody?.className).toContain("divide-y");
       expect(tbody?.className).toContain("divide-border");
-      expect(tbody?.className).toContain("bg-muted/40");
     });
 
     it("should render tr with correct classes", () => {

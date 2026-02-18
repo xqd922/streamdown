@@ -1,0 +1,53 @@
+---
+title: "@streamdown/math"
+description: Render mathematical expressions using KaTeX.
+type: reference
+summary: KaTeX-powered LaTeX rendering for inline and block math expressions.
+prerequisites:
+  - /docs/plugins
+related:
+  - /docs/mathematics
+---
+
+The `@streamdown/math` plugin renders mathematical expressions using [KaTeX](https://katex.org/).
+
+- Fast LaTeX rendering
+- Inline and block math support
+- Requires CSS import
+
+## Install
+
+```package-install
+npm install @streamdown/math
+```
+
+## Usage
+
+```tsx
+import { math } from '@streamdown/math';
+import 'katex/dist/katex.min.css';
+
+<Streamdown plugins={{ math }}>
+  {markdown}
+</Streamdown>
+```
+
+## Custom configuration
+
+```tsx
+import { createMathPlugin } from '@streamdown/math';
+
+const math = createMathPlugin({
+  singleDollarTextMath: true, // Enable $...$ syntax
+  errorColor: '#ff0000',
+});
+```
+
+## Get CSS path
+
+```tsx
+const cssPath = math.getStyles();
+// Returns: "katex/dist/katex.min.css"
+```
+
+See [Mathematics](/docs/mathematics) for details on supported LaTeX syntax and rendering behavior.

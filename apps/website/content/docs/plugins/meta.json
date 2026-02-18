@@ -1,0 +1,10 @@
+{
+  "title": "Plugins",
+  "pages": [
+    "index",
+    "code",
+    "mermaid",
+    "math",
+    "cjk"
+  ]
+}

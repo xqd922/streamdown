@@ -1,0 +1,47 @@
+---
+title: "@streamdown/mermaid"
+description: Render Mermaid diagrams including flowcharts, sequence diagrams, and more.
+type: reference
+summary: Client-side Mermaid rendering with interactive controls, theming, and error handling.
+prerequisites:
+  - /docs/plugins
+related:
+  - /docs/mermaid
+---
+
+The `@streamdown/mermaid` plugin renders [Mermaid](https://mermaid.js.org/) diagrams including flowcharts, sequence diagrams, and more.
+
+- Interactive controls (fullscreen, download, copy)
+- Custom theming support
+- Error handling with retry
+
+## Install
+
+```package-install
+npm install @streamdown/mermaid
+```
+
+## Usage
+
+```tsx
+import { mermaid } from '@streamdown/mermaid';
+
+<Streamdown plugins={{ mermaid }}>
+  {markdown}
+</Streamdown>
+```
+
+## Custom configuration
+
+```tsx
+import { createMermaidPlugin } from '@streamdown/mermaid';
+
+const mermaid = createMermaidPlugin({
+  config: {
+    theme: 'dark',
+    fontFamily: 'monospace',
+  },
+});
+```
+
+See [Mermaid Diagrams](/docs/mermaid) for details on supported diagram types and theming.

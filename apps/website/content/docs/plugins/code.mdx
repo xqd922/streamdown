@@ -1,0 +1,45 @@
+---
+title: "@streamdown/code"
+description: Syntax highlighting for code blocks using Shiki.
+type: reference
+summary: Add syntax highlighting with 200+ languages, dual themes, and lazy-loaded grammars.
+prerequisites:
+  - /docs/plugins
+related:
+  - /docs/code-blocks
+---
+
+The `@streamdown/code` plugin provides syntax highlighting for code blocks using [Shiki](https://shiki.style/).
+
+- Supports 200+ programming languages
+- Languages are lazy-loaded on demand
+- Dual theme support (light/dark mode)
+- Token caching for performance
+
+## Install
+
+```package-install
+npm install @streamdown/code
+```
+
+## Usage
+
+```tsx
+import { code } from '@streamdown/code';
+
+<Streamdown plugins={{ code }}>
+  {markdown}
+</Streamdown>
+```
+
+## Custom configuration
+
+```tsx
+import { createCodePlugin } from '@streamdown/code';
+
+const code = createCodePlugin({
+  themes: ['github-light', 'github-dark'], // [light, dark]
+});
+```
+
+See [Code Blocks](/docs/code-blocks) for details on rendering behavior, line numbers, and copy buttons.

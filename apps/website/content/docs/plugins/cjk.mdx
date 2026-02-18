@@ -1,0 +1,34 @@
+---
+title: "@streamdown/cjk"
+description: Improved handling of Chinese, Japanese, and Korean text.
+type: reference
+summary: Proper emphasis formatting and autolink handling for CJK text.
+prerequisites:
+  - /docs/plugins
+related:
+  - /docs/cjk-support
+---
+
+The `@streamdown/cjk` plugin improves handling of CJK (Chinese, Japanese, Korean) text with proper emphasis formatting and autolink handling.
+
+- Correct emphasis formatting near ideographic punctuation (bold, italic, strikethrough)
+- Splits autolinks at CJK punctuation boundaries to prevent URLs from swallowing trailing punctuation
+- Uses `remark-cjk-friendly` and `remark-cjk-friendly-gfm-strikethrough` for proper parsing
+
+## Install
+
+```package-install
+npm install @streamdown/cjk
+```
+
+## Usage
+
+```tsx
+import { cjk } from '@streamdown/cjk';
+
+<Streamdown plugins={{ cjk }}>
+  {markdown}
+</Streamdown>
+```
+
+See [CJK Language Support](/docs/cjk-support) for details on supported features and edge cases.

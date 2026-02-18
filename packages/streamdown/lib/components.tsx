@@ -822,7 +822,7 @@ MemoImg.displayName = "MarkdownImg";
 
 type ParagraphProps = WithNode<JSX.IntrinsicElements["p"]>;
 const MemoParagraph = memo<ParagraphProps>(
-  ({ children, className, node, ...props }: ParagraphProps) => {
+  ({ children, node, ...props }: ParagraphProps) => {
     // Check if the paragraph contains only an image element
     // If so, render the image directly without the <p> wrapper to avoid hydration errors
     // (since our ImageComponent returns a <div>, which cannot be nested inside <p>)
@@ -856,11 +856,7 @@ const MemoParagraph = memo<ParagraphProps>(
       }
     }
 
-    return (
-      <p className={className} {...props}>
-        {children}
-      </p>
-    );
+    return <p {...props}>{children}</p>;
   },
   (p, n) => sameClassAndNode(p, n)
 );

@@ -751,33 +751,43 @@ const CodeComponent = ({
       <Suspense fallback={<CodeBlockSkeleton />}>
         <div
           className={cn(
-            "group relative my-4 h-auto rounded-xl border p-4",
+            "group relative my-4 flex w-full flex-col gap-2 rounded-xl border border-border bg-sidebar p-2",
             className
           )}
           data-streamdown="mermaid-block"
         >
+          <div className="flex h-8 items-center text-muted-foreground text-xs">
+            <span className="ml-1 font-mono lowercase">mermaid</span>
+          </div>
           {shouldShowMermaidControls ? (
-            <div className="flex items-center justify-end gap-2">
-              {showDownload ? (
-                <MermaidDownloadDropdown
-                  chart={code}
-                  config={mermaidContext?.config}
-                />
-              ) : null}
-              {showCopy ? <CodeBlockCopyButton code={code} /> : null}
-              {showFullscreen ? (
-                <MermaidFullscreenButton
-                  chart={code}
-                  config={mermaidContext?.config}
-                />
-              ) : null}
+            <div className="pointer-events-none sticky top-2 z-10 -mt-10 flex h-8 items-center justify-end">
+              <div
+                className="pointer-events-auto flex shrink-0 items-center gap-2 rounded-md border border-sidebar bg-sidebar/80 px-1.5 py-1 supports-[backdrop-filter]:bg-sidebar/70 supports-[backdrop-filter]:backdrop-blur"
+                data-streamdown="mermaid-block-actions"
+              >
+                {showDownload ? (
+                  <MermaidDownloadDropdown
+                    chart={code}
+                    config={mermaidContext?.config}
+                  />
+                ) : null}
+                {showCopy ? <CodeBlockCopyButton code={code} /> : null}
+                {showFullscreen ? (
+                  <MermaidFullscreenButton
+                    chart={code}
+                    config={mermaidContext?.config}
+                  />
+                ) : null}
+              </div>
             </div>
           ) : null}
-          <Mermaid
-            chart={code}
-            config={mermaidContext?.config}
-            showControls={showPanZoomControls}
-          />
+          <div className="rounded-md border border-border bg-background">
+            <Mermaid
+              chart={code}
+              config={mermaidContext?.config}
+              showControls={showPanZoomControls}
+            />
+          </div>
         </div>
       </Suspense>
     );

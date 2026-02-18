@@ -157,7 +157,7 @@ export const Mermaid = ({
     >
       <PanZoom
         className={cn(
-          fullscreen ? "size-full overflow-hidden" : "my-4 overflow-hidden",
+          fullscreen ? "size-full overflow-hidden" : "overflow-hidden",
           className
         )}
         fullscreen={fullscreen}

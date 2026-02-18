@@ -10,6 +10,9 @@ import {
   type SpecialLanguage,
   type TokensResult,
 } from "shiki";
+import { createJavaScriptRegexEngine } from "shiki/engine/javascript";
+
+const jsEngine = createJavaScriptRegexEngine({ forgiving: true });
 
 /**
  * Result from code highlighting
@@ -131,6 +134,7 @@ const getHighlighter = (
   const highlighterPromise = createHighlighter({
     themes: themeNames,
     langs: [language],
+    engine: jsEngine,
   });
 
   highlighterCache.set(cacheKey, highlighterPromise);

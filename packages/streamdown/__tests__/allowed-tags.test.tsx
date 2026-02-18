@@ -166,6 +166,47 @@ describe("allowedTags prop", () => {
     expect(tag2?.textContent).toBe("second");
   });
 
+  it("should handle custom tags with blank lines in content", () => {
+    const Snippet = (props: CustomComponentProps) => (
+      <div data-testid={`snippet-${props.id}`}>
+        {props.children as React.ReactNode}
+      </div>
+    );
+
+    const { container } = render(
+      <Streamdown
+        allowedTags={{ snippet: ["id", "file", "index"] }}
+        components={{ snippet: Snippet }}
+        mode="static"
+      >
+        {`<snippet id="1" file="test.txt" index="1">
+Snippet 1
+
+Some more content on a new line
+</snippet>
+
+<snippet id="2" file="test.txt" index="2">
+Snippet 2
+
+Content for snippet 2
+</snippet>`}
+      </Streamdown>
+    );
+
+    // rehype-sanitize prefixes id attributes with "user-content-"
+    const snippet1 = container.querySelector(
+      '[data-testid="snippet-user-content-1"]'
+    );
+    const snippet2 = container.querySelector(
+      '[data-testid="snippet-user-content-2"]'
+    );
+    expect(snippet1).toBeTruthy();
+    expect(snippet2).toBeTruthy();
+    // Ensure snippet 2's content isn't absorbed into snippet 1
+    expect(snippet1?.textContent).not.toContain("Snippet 2");
+    expect(snippet2?.textContent).toContain("Snippet 2");
+  });
+
   it("should handle empty allowedTags object", () => {
     const { container } = render(
       <Streamdown allowedTags={{}} mode="static">

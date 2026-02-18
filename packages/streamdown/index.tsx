@@ -24,6 +24,7 @@ import { components as defaultComponents } from "./lib/components";
 import { hasIncompleteCodeFence } from "./lib/incomplete-code-utils";
 import { Markdown, type Options } from "./lib/markdown";
 import { parseMarkdownIntoBlocks } from "./lib/parse-blocks";
+import { preprocessCustomTags } from "./lib/preprocess-custom-tags";
 import { PluginContext } from "./lib/plugin-context";
 import type { PluginConfig } from "./lib/plugin-types";
 import { cn } from "./lib/utils";
@@ -319,16 +320,35 @@ export const Streamdown = memo(
     const generatedId = useId();
     const [_isPending, startTransition] = useTransition();
 
+    const allowedTagNames = useMemo(
+      () => (allowedTags ? Object.keys(allowedTags) : []),
+      [allowedTags]
+    );
+
     // Apply remend to fix incomplete markdown BEFORE parsing into blocks
     // This prevents partial list items from being interpreted as setext headings
     const processedChildren = useMemo(() => {
       if (typeof children !== "string") {
         return "";
       }
-      return mode === "streaming" && shouldParseIncompleteMarkdown
-        ? remend(children, remendOptions)
-        : children;
-    }, [children, mode, shouldParseIncompleteMarkdown, remendOptions]);
+      let result =
+        mode === "streaming" && shouldParseIncompleteMarkdown
+          ? remend(children, remendOptions)
+          : children;
+
+      // Preprocess custom tags to prevent blank lines from splitting HTML blocks
+      if (allowedTagNames.length > 0) {
+        result = preprocessCustomTags(result, allowedTagNames);
+      }
+
+      return result;
+    }, [
+      children,
+      mode,
+      shouldParseIncompleteMarkdown,
+      remendOptions,
+      allowedTagNames,
+    ]);
 
     const blocks = useMemo(
       () => parseMarkdownIntoBlocksFn(processedChildren),
@@ -489,7 +509,7 @@ export const Streamdown = memo(
                 remarkPlugins={mergedRemarkPlugins}
                 {...props}
               >
-                {children}
+                {processedChildren}
               </Markdown>
             </div>
           </StreamdownContext.Provider>

@@ -13,16 +13,19 @@ export const Table = ({
   showControls,
   ...props
 }: TableProps) => (
-  <div className="my-4 flex flex-col space-y-2" data-streamdown="table-wrapper">
+  <div
+    className="my-4 flex flex-col gap-2 rounded-md border border-border bg-sidebar p-2"
+    data-streamdown="table-wrapper"
+  >
     {showControls ? (
       <div className="flex items-center justify-end gap-1">
         <TableCopyDropdown />
         <TableDownloadDropdown />
       </div>
     ) : null}
-    <div className="overflow-x-auto overscroll-y-auto">
+    <div className="border-collapse overflow-x-auto overscroll-y-auto rounded-sm border border-border bg-background">
       <table
-        className={cn("w-full border-collapse border border-border", className)}
+        className={cn("w-full divide-y divide-border", className)}
         data-streamdown="table"
         {...props}
       >

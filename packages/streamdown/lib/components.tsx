@@ -442,7 +442,7 @@ type TbodyProps = WithNode<JSX.IntrinsicElements["tbody"]>;
 const MemoTbody = memo<TbodyProps>(
   ({ children, className, node, ...props }: TbodyProps) => (
     <tbody
-      className={cn("divide-y divide-border bg-muted/40", className)}
+      className={cn("divide-y divide-border", className)}
       data-streamdown="table-body"
       {...props}
     >
@@ -457,7 +457,7 @@ type TrProps = WithNode<JSX.IntrinsicElements["tr"]>;
 const MemoTr = memo<TrProps>(
   ({ children, className, node, ...props }: TrProps) => (
     <tr
-      className={cn("border-border border-b", className)}
+      className={cn("border-border", className)}
       data-streamdown="table-row"
       {...props}
     >

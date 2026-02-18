@@ -5,7 +5,7 @@ import { useCodePlugin } from "../plugin-context";
 import type { HighlightResult } from "../plugin-types";
 import { CodeBlockBody } from "./body";
 
-type HighlightedCodeBlockBodyProps = HTMLAttributes<HTMLPreElement> & {
+type HighlightedCodeBlockBodyProps = HTMLAttributes<HTMLDivElement> & {
   code: string;
   language: string;
   raw: HighlightResult;

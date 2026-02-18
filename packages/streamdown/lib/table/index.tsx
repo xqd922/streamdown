@@ -14,7 +14,7 @@ export const Table = ({
   ...props
 }: TableProps) => (
   <div
-    className="my-4 flex flex-col gap-2 rounded-md border border-border bg-sidebar p-2"
+    className="my-4 flex flex-col gap-2 rounded-lg border border-border bg-sidebar p-2"
     data-streamdown="table-wrapper"
   >
     {showControls ? (
@@ -23,7 +23,7 @@ export const Table = ({
         <TableDownloadDropdown />
       </div>
     ) : null}
-    <div className="border-collapse overflow-x-auto overscroll-y-auto rounded-sm border border-border bg-background">
+    <div className="border-collapse overflow-x-auto overscroll-y-auto rounded-md border border-border bg-background">
       <table
         className={cn("w-full divide-y divide-border", className)}
         data-streamdown="table"

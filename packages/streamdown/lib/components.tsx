@@ -787,7 +787,7 @@ const CodeComponent = ({
 
   return (
     <CodeBlock
-      className={cn("overflow-x-auto border-border border-t", className)}
+      className={className}
       code={code}
       isIncomplete={isBlockIncomplete}
       language={language}

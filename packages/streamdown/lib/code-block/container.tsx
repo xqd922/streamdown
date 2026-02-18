@@ -16,7 +16,7 @@ export const CodeBlockContainer = ({
 }: CodeBlockContainerProps) => (
   <div
     className={cn(
-      "my-4 w-full rounded-xl border border-border",
+      "my-4 flex w-full flex-col gap-2 rounded-xl border border-border bg-sidebar p-2",
       className
     )}
     data-incomplete={isIncomplete || undefined}

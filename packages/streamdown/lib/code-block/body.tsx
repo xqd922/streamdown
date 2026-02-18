@@ -2,7 +2,7 @@ import { type ComponentProps, type CSSProperties, memo, useMemo } from "react";
 import type { HighlightResult } from "../plugin-types";
 import { cn } from "../utils";
 
-type CodeBlockBodyProps = ComponentProps<"pre"> & {
+type CodeBlockBodyProps = ComponentProps<"div"> & {
   result: HighlightResult;
   language: string;
 };
@@ -65,76 +65,83 @@ export const CodeBlockBody = memo(
     }, [result.bg, result.fg, result.rootStyle]);
 
     return (
-      <pre
+      <div
         className={cn(
           className,
-          "p-4 text-sm",
-          "bg-[var(--sdm-bg,transparent)]",
-          "dark:bg-[var(--shiki-dark-bg,var(--sdm-bg,transparent))]"
+          "overflow-hidden rounded-md border border-border bg-background p-4 text-sm"
         )}
         data-language={language}
         data-streamdown="code-block-body"
-        style={preStyle}
         {...rest}
       >
-        <code className="[counter-increment:line_0] [counter-reset:line]">
-          {result.tokens.map((row, index) => (
-            <span
-              className={LINE_NUMBER_CLASSES}
-              // biome-ignore lint/suspicious/noArrayIndexKey: "This is a stable key."
-              key={index}
-            >
-              {row.map((token, tokenIndex) => {
-                // Shiki dual-theme tokens put direct CSS properties (color,
-                // background-color) into htmlStyle alongside CSS custom
-                // properties (--shiki-dark, etc). Direct properties as inline
-                // styles override the Tailwind class-based dark mode approach,
-                // so we redirect them to CSS custom properties instead.
-                const tokenStyle: Record<string, string> = {};
-                let hasBg = Boolean(token.bgColor);
+        <pre
+          className={cn(
+            className,
+            "bg-[var(--sdm-bg,inherit]",
+            "dark:bg-[var(--shiki-dark-bg,var(--sdm-bg,inherit)]"
+          )}
+          style={preStyle}
+        >
+          <code className="[counter-increment:line_0] [counter-reset:line]">
+            {result.tokens.map((row, index) => (
+              <span
+                className={LINE_NUMBER_CLASSES}
+                // biome-ignore lint/suspicious/noArrayIndexKey: "This is a stable key."
+                key={index}
+              >
+                {row.map((token, tokenIndex) => {
+                  // Shiki dual-theme tokens put direct CSS properties (color,
+                  // background-color) into htmlStyle alongside CSS custom
+                  // properties (--shiki-dark, etc). Direct properties as inline
+                  // styles override the Tailwind class-based dark mode approach,
+                  // so we redirect them to CSS custom properties instead.
+                  const tokenStyle: Record<string, string> = {};
+                  let hasBg = Boolean(token.bgColor);
 
-                if (token.color) {
-                  tokenStyle["--sdm-c"] = token.color;
-                }
-                if (token.bgColor) {
-                  tokenStyle["--sdm-tbg"] = token.bgColor;
-                }
+                  if (token.color) {
+                    tokenStyle["--sdm-c"] = token.color;
+                  }
+                  if (token.bgColor) {
+                    tokenStyle["--sdm-tbg"] = token.bgColor;
+                  }
 
-                if (token.htmlStyle) {
-                  for (const [key, value] of Object.entries(token.htmlStyle)) {
-                    if (key === "color") {
-                      tokenStyle["--sdm-c"] = value;
-                    } else if (key === "background-color") {
-                      tokenStyle["--sdm-tbg"] = value;
-                      hasBg = true;
-                    } else {
-                      tokenStyle[key] = value;
+                  if (token.htmlStyle) {
+                    for (const [key, value] of Object.entries(
+                      token.htmlStyle
+                    )) {
+                      if (key === "color") {
+                        tokenStyle["--sdm-c"] = value;
+                      } else if (key === "background-color") {
+                        tokenStyle["--sdm-tbg"] = value;
+                        hasBg = true;
+                      } else {
+                        tokenStyle[key] = value;
+                      }
                     }
                   }
-                }
 
-                return (
-                  <span
-                    className={cn(
-                      "text-[var(--sdm-c,inherit)]",
-                      "dark:text-[var(--shiki-dark,var(--sdm-c,inherit))]",
-                      hasBg && "bg-[var(--sdm-tbg)]",
-                      hasBg &&
-                        "dark:bg-[var(--shiki-dark-bg,var(--sdm-tbg))]"
-                    )}
-                    // biome-ignore lint/suspicious/noArrayIndexKey: "This is a stable key."
-                    key={tokenIndex}
-                    style={tokenStyle as CSSProperties}
-                    {...token.htmlAttrs}
-                  >
-                    {token.content}
-                  </span>
-                );
-              })}
-            </span>
-          ))}
-        </code>
-      </pre>
+                  return (
+                    <span
+                      className={cn(
+                        "text-[var(--sdm-c,inherit)]",
+                        "dark:text-[var(--shiki-dark,var(--sdm-c,inherit))]",
+                        hasBg && "bg-[var(--sdm-tbg)]",
+                        hasBg && "dark:bg-[var(--shiki-dark-bg,var(--sdm-tbg))]"
+                      )}
+                      // biome-ignore lint/suspicious/noArrayIndexKey: "This is a stable key."
+                      key={tokenIndex}
+                      style={tokenStyle as CSSProperties}
+                      {...token.htmlAttrs}
+                    >
+                      {token.content}
+                    </span>
+                  );
+                })}
+              </span>
+            ))}
+          </code>
+        </pre>
+      </div>
     );
   },
   (prevProps, nextProps) => {

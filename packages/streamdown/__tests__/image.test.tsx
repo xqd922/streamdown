@@ -78,6 +78,9 @@ describe("ImageComponent", () => {
       />
     );
 
+    const img = container.querySelector('img[data-streamdown="image"]');
+    if (img) fireEvent.load(img);
+
     const button = container.querySelector('button[title="Download image"]');
     expect(button).toBeTruthy();
   });
@@ -112,6 +115,9 @@ describe("ImageComponent", () => {
       />
     );
 
+    const img = container.querySelector('img[data-streamdown="image"]');
+    if (img) fireEvent.load(img);
+
     const button = container.querySelector('button[title="Download image"]');
     expect(button).toBeTruthy();
     if (button) {
@@ -138,6 +144,9 @@ describe("ImageComponent", () => {
         src="https://example.com/noextension"
       />
     );
+
+    const img = container.querySelector('img[data-streamdown="image"]');
+    if (img) fireEvent.load(img);
 
     const button = container.querySelector('button[title="Download image"]');
     expect(button).toBeTruthy();
@@ -167,6 +176,9 @@ describe("ImageComponent", () => {
         src="https://example.com/noext"
       />
     );
+
+    const img = container.querySelector('img[data-streamdown="image"]');
+    if (img) fireEvent.load(img);
 
     const button = container.querySelector('button[title="Download image"]');
     expect(button).toBeTruthy();
@@ -207,6 +219,9 @@ describe("ImageComponent", () => {
         />
       );
 
+      const img = container.querySelector('img[data-streamdown="image"]');
+      if (img) fireEvent.load(img);
+
       const button = container.querySelector('button[title="Download image"]');
       expect(button).toBeTruthy();
       if (button) {
@@ -238,6 +253,9 @@ describe("ImageComponent", () => {
       />
     );
 
+    const img = container.querySelector('img[data-streamdown="image"]');
+    if (img) fireEvent.load(img);
+
     const button = container.querySelector('button[title="Download image"]');
     expect(button).toBeTruthy();
     if (button) {
@@ -265,6 +283,9 @@ describe("ImageComponent", () => {
       <ImageComponent node={null as any} src="https://example.com/" />
     );
 
+    const img = container.querySelector('img[data-streamdown="image"]');
+    if (img) fireEvent.load(img);
+
     const button = container.querySelector('button[title="Download image"]');
     expect(button).toBeTruthy();
     if (button) {
@@ -289,6 +310,9 @@ describe("ImageComponent", () => {
         src="https://example.com/image.png"
       />
     );
+
+    const img = container.querySelector('img[data-streamdown="image"]');
+    if (img) fireEvent.load(img);
 
     const button = container.querySelector('button[title="Download image"]');
     expect(button).toBeTruthy();
@@ -339,6 +363,9 @@ describe("ImageComponent", () => {
         src="https://example.com/"
       />
     );
+
+    const img = container.querySelector('img[data-streamdown="image"]');
+    if (img) fireEvent.load(img);
 
     const button = container.querySelector('button[title="Download image"]');
     expect(button).toBeTruthy();

@@ -1,7 +1,6 @@
 import {
   boldItalicPattern,
   boldPattern,
-  doubleUnderscoreGlobalPattern,
   fourOrMoreAsterisksPattern,
   halfCompleteUnderscorePattern,
   italicPattern,
@@ -108,12 +107,31 @@ const shouldSkipAsterisk = (
 };
 
 // OPTIMIZATION: Counts single asterisks without split("").reduce()
-// Counts single asterisks that are not part of double asterisks, not escaped, not list markers, and not word-internal
+// Counts single asterisks that are not part of double asterisks, not escaped, not list markers, not word-internal,
+// and not inside fenced code blocks
 export const countSingleAsterisks = (text: string): number => {
   let count = 0;
+  let inCodeBlock = false;
   const len = text.length;
 
   for (let index = 0; index < len; index += 1) {
+    // Track fenced code blocks (```)
+    if (
+      text[index] === "`" &&
+      index + 2 < len &&
+      text[index + 1] === "`" &&
+      text[index + 2] === "`"
+    ) {
+      inCodeBlock = !inCodeBlock;
+      index += 2;
+      continue;
+    }
+
+    // Skip content inside fenced code blocks
+    if (inCodeBlock) {
+      continue;
+    }
+
     if (text[index] !== "*") {
       continue;
     }
@@ -171,12 +189,31 @@ const shouldSkipUnderscore = (
 };
 
 // OPTIMIZATION: Counts single underscores without split("").reduce()
-// Counts single underscores that are not part of double underscores, not escaped, and not in math blocks
+// Counts single underscores that are not part of double underscores, not escaped, not in math blocks,
+// and not inside fenced code blocks
 export const countSingleUnderscores = (text: string): number => {
   let count = 0;
+  let inCodeBlock = false;
   const len = text.length;
 
   for (let index = 0; index < len; index += 1) {
+    // Track fenced code blocks (```)
+    if (
+      text[index] === "`" &&
+      index + 2 < len &&
+      text[index + 1] === "`" &&
+      text[index + 2] === "`"
+    ) {
+      inCodeBlock = !inCodeBlock;
+      index += 2;
+      continue;
+    }
+
+    // Skip content inside fenced code blocks
+    if (inCodeBlock) {
+      continue;
+    }
+
     if (text[index] !== "_") {
       continue;
     }
@@ -193,13 +230,37 @@ export const countSingleUnderscores = (text: string): number => {
 };
 
 // Counts triple asterisks that are not part of quadruple or more asterisks
+// and not inside fenced code blocks
 // OPTIMIZATION: Count *** without regex to avoid allocation
 export const countTripleAsterisks = (text: string): number => {
   let count = 0;
   let consecutiveAsterisks = 0;
+  let inCodeBlock = false;
 
   // biome-ignore lint/style/useForOf: "Need index access to check character codes for performance"
   for (let i = 0; i < text.length; i += 1) {
+    // Track fenced code blocks (```)
+    if (
+      text[i] === "`" &&
+      i + 2 < text.length &&
+      text[i + 1] === "`" &&
+      text[i + 2] === "`"
+    ) {
+      // Flush any pending asterisks before toggling
+      if (consecutiveAsterisks >= 3) {
+        count += Math.floor(consecutiveAsterisks / 3);
+      }
+      consecutiveAsterisks = 0;
+      inCodeBlock = !inCodeBlock;
+      i += 2;
+      continue;
+    }
+
+    // Skip content inside fenced code blocks
+    if (inCodeBlock) {
+      continue;
+    }
+
     if (text[i] === "*") {
       consecutiveAsterisks += 1;
     } else {
@@ -216,6 +277,60 @@ export const countTripleAsterisks = (text: string): number => {
     count += Math.floor(consecutiveAsterisks / 3);
   }
 
+  return count;
+};
+
+// Counts ** pairs outside fenced code blocks
+const countDoubleAsterisksOutsideCodeBlocks = (text: string): number => {
+  let count = 0;
+  let inCodeBlock = false;
+
+  for (let i = 0; i < text.length; i += 1) {
+    if (
+      text[i] === "`" &&
+      i + 2 < text.length &&
+      text[i + 1] === "`" &&
+      text[i + 2] === "`"
+    ) {
+      inCodeBlock = !inCodeBlock;
+      i += 2;
+      continue;
+    }
+    if (inCodeBlock) {
+      continue;
+    }
+    if (text[i] === "*" && i + 1 < text.length && text[i + 1] === "*") {
+      count += 1;
+      i += 1;
+    }
+  }
+  return count;
+};
+
+// Counts __ pairs outside fenced code blocks
+const countDoubleUnderscoresOutsideCodeBlocks = (text: string): number => {
+  let count = 0;
+  let inCodeBlock = false;
+
+  for (let i = 0; i < text.length; i += 1) {
+    if (
+      text[i] === "`" &&
+      i + 2 < text.length &&
+      text[i + 1] === "`" &&
+      text[i + 2] === "`"
+    ) {
+      inCodeBlock = !inCodeBlock;
+      i += 2;
+      continue;
+    }
+    if (inCodeBlock) {
+      continue;
+    }
+    if (text[i] === "_" && i + 1 < text.length && text[i + 1] === "_") {
+      count += 1;
+      i += 1;
+    }
+  }
   return count;
 };
 
@@ -268,7 +383,7 @@ export const handleIncompleteBold = (text: string): string => {
     return text;
   }
 
-  const asteriskPairs = (text.match(/\*\*/g) || []).length;
+  const asteriskPairs = countDoubleAsterisksOutsideCodeBlocks(text);
   if (asteriskPairs % 2 === 1) {
     // Check for half-complete closing marker: **content* should become **content**
     // The trailing * is the first char of the closing ** being streamed
@@ -324,9 +439,8 @@ export const handleIncompleteDoubleUnderscoreItalic = (
     if (halfCompleteMatch) {
       const markerIndex = text.lastIndexOf(halfCompleteMatch[1]);
       if (!isWithinCodeBlock(text, markerIndex)) {
-        const underscorePairs = (
-          text.match(doubleUnderscoreGlobalPattern) || []
-        ).length;
+        const underscorePairs =
+          countDoubleUnderscoresOutsideCodeBlocks(text);
         if (underscorePairs % 2 === 1) {
           return `${text}_`;
         }
@@ -347,7 +461,7 @@ export const handleIncompleteDoubleUnderscoreItalic = (
     return text;
   }
 
-  const underscorePairs = (text.match(/__/g) || []).length;
+  const underscorePairs = countDoubleUnderscoresOutsideCodeBlocks(text);
   if (underscorePairs % 2 === 1) {
     return `${text}__`;
   }
@@ -355,9 +469,28 @@ export const handleIncompleteDoubleUnderscoreItalic = (
   return text;
 };
 
-// Helper function to find the first single asterisk index
+// Helper function to find the first single asterisk index (skips fenced code blocks)
 const findFirstSingleAsteriskIndex = (text: string): number => {
+  let inCodeBlock = false;
+
   for (let i = 0; i < text.length; i += 1) {
+    // Track fenced code blocks (```)
+    if (
+      text[i] === "`" &&
+      i + 2 < text.length &&
+      text[i + 1] === "`" &&
+      text[i + 2] === "`"
+    ) {
+      inCodeBlock = !inCodeBlock;
+      i += 2;
+      continue;
+    }
+
+    // Skip content inside fenced code blocks
+    if (inCodeBlock) {
+      continue;
+    }
+
     if (
       text[i] === "*" &&
       text[i - 1] !== "*" &&
@@ -434,9 +567,28 @@ export const handleIncompleteSingleAsteriskItalic = (text: string): string => {
   return text;
 };
 
-// Helper function to find the first single underscore index
+// Helper function to find the first single underscore index (skips fenced code blocks)
 const findFirstSingleUnderscoreIndex = (text: string): number => {
+  let inCodeBlock = false;
+
   for (let i = 0; i < text.length; i += 1) {
+    // Track fenced code blocks (```)
+    if (
+      text[i] === "`" &&
+      i + 2 < text.length &&
+      text[i + 1] === "`" &&
+      text[i + 2] === "`"
+    ) {
+      inCodeBlock = !inCodeBlock;
+      i += 2;
+      continue;
+    }
+
+    // Skip content inside fenced code blocks
+    if (inCodeBlock) {
+      continue;
+    }
+
     if (
       text[i] === "_" &&
       text[i - 1] !== "_" &&
@@ -486,9 +638,8 @@ const handleTrailingAsterisksForUnderscore = (text: string): string | null => {
   }
 
   const textWithoutTrailingAsterisks = text.slice(0, -2);
-  const asteriskPairsAfterRemoval = (
-    textWithoutTrailingAsterisks.match(/\*\*/g) || []
-  ).length;
+  const asteriskPairsAfterRemoval =
+    countDoubleAsterisksOutsideCodeBlocks(textWithoutTrailingAsterisks);
 
   // If removing trailing ** makes the count odd, it was added to close an unclosed **
   if (asteriskPairsAfterRemoval % 2 !== 1) {
@@ -562,7 +713,7 @@ export const handleIncompleteSingleUnderscoreItalic = (
 
 // Helper to check if bold-italic markers are already balanced
 const areBoldItalicMarkersBalanced = (text: string): boolean => {
-  const asteriskPairs = (text.match(/\*\*/g) || []).length;
+  const asteriskPairs = countDoubleAsterisksOutsideCodeBlocks(text);
   const singleAsterisks = countSingleAsterisks(text);
   return asteriskPairs % 2 === 0 && singleAsterisks % 2 === 0;
 };

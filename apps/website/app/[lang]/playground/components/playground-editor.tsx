@@ -4,9 +4,16 @@ import { cjk } from "@streamdown/cjk";
 import { code } from "@streamdown/code";
 import { math } from "@streamdown/math";
 import { mermaid } from "@streamdown/mermaid";
-import { useState } from "react";
+import { SettingsIcon } from "lucide-react";
+import { useCallback, useRef, useState } from "react";
 import { Streamdown } from "streamdown";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
@@ -251,14 +258,54 @@ Three dashes create a horizontal rule:
 const PlaygroundEditor = () => {
   const [markdown, setMarkdown] = useState(defaultMarkdown);
   const [mode, setMode] = useState<"static" | "streaming">("static");
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [animated, setAnimated] = useState(false);
+  const [animation, setAnimation] = useState<"fadeIn" | "blurIn" | "slideUp">("fadeIn");
+  const [animationDuration, setAnimationDuration] = useState(150);
+  const [animationEasing, setAnimationEasing] = useState("ease");
+  const [animationSep, setAnimationSep] = useState<"word" | "char">("word");
+  const [caret, setCaret] = useState<"block" | "circle" | "none">("block");
+  const [chunkSize, setChunkSize] = useState(12);
+  const [chunkDelay, setChunkDelay] = useState(10);
+  const streamRef = useRef<ReturnType<typeof setInterval>>(null);
+  const indexRef = useRef(0);
+
+  const stopStreaming = useCallback(() => {
+    if (streamRef.current) {
+      clearInterval(streamRef.current);
+      streamRef.current = null;
+    }
+    setIsStreaming(false);
+  }, []);
+
+  const simulateStreaming = useCallback(() => {
+    stopStreaming();
+    setMarkdown("");
+    setMode("streaming");
+    indexRef.current = 0;
+    setIsStreaming(true);
+
+    streamRef.current = setInterval(() => {
+      const nextIndex = indexRef.current + chunkSize;
+
+      if (nextIndex >= defaultMarkdown.length) {
+        setMarkdown(defaultMarkdown);
+        stopStreaming();
+        return;
+      }
+
+      indexRef.current = nextIndex;
+      setMarkdown(defaultMarkdown.slice(0, nextIndex));
+    }, chunkDelay);
+  }, [stopStreaming, chunkSize, chunkDelay]);
 
   return (
     <div className="flex h-[calc(100dvh-65px-75px)] flex-col overflow-hidden">
-      <header className="flex shrink-0 items-center justify-between border-b px-6 py-3">
-        <h1 className="font-semibold text-lg tracking-tight">
+      <header className="flex shrink-0 items-center justify-between border-b p-2">
+        <h1 className="px-2 font-semibold text-lg tracking-tight">
           Streamdown Playground
         </h1>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <Select
             onValueChange={(value) => setMode(value as "static" | "streaming")}
             value={mode}
@@ -271,7 +318,181 @@ const PlaygroundEditor = () => {
               <SelectItem value="streaming">Streaming</SelectItem>
             </SelectContent>
           </Select>
-          <Button onClick={() => setMarkdown("")} size="sm" variant="outline">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button aria-label="Settings" size="sm" variant="outline">
+                <SettingsIcon className="size-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-72">
+              <div className="grid gap-4">
+                <p className="font-medium text-sm">Rendering</p>
+                <div className="grid gap-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground text-sm">
+                      Animated
+                    </span>
+                    <Select
+                      onValueChange={(value) => setAnimated(value === "true")}
+                      value={String(animated)}
+                    >
+                      <SelectTrigger className="w-24" size="sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="true">On</SelectItem>
+                        <SelectItem value="false">Off</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  {animated && (
+                    <>
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground text-sm">
+                          Effect
+                        </span>
+                        <Select
+                          onValueChange={(value) =>
+                            setAnimation(value as "fadeIn" | "blurIn" | "slideUp")
+                          }
+                          value={animation}
+                        >
+                          <SelectTrigger className="w-24" size="sm">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="fadeIn">Fade in</SelectItem>
+                            <SelectItem value="blurIn">Blur in</SelectItem>
+                            <SelectItem value="slideUp">Slide up</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground text-sm">
+                          Duration (ms)
+                        </span>
+                        <Input
+                          className="w-24"
+                          min={1}
+                          max={2000}
+                          onChange={(e) =>
+                            setAnimationDuration(Math.max(1, Number(e.target.value)))
+                          }
+                          type="number"
+                          value={animationDuration}
+                        />
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground text-sm">
+                          Easing
+                        </span>
+                        <Select
+                          onValueChange={setAnimationEasing}
+                          value={animationEasing}
+                        >
+                          <SelectTrigger className="w-24" size="sm">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="ease">ease</SelectItem>
+                            <SelectItem value="ease-in">ease-in</SelectItem>
+                            <SelectItem value="ease-out">ease-out</SelectItem>
+                            <SelectItem value="ease-in-out">ease-in-out</SelectItem>
+                            <SelectItem value="linear">linear</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground text-sm">
+                          Split by
+                        </span>
+                        <Select
+                          onValueChange={(value) =>
+                            setAnimationSep(value as "word" | "char")
+                          }
+                          value={animationSep}
+                        >
+                          <SelectTrigger className="w-24" size="sm">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="word">Word</SelectItem>
+                            <SelectItem value="char">Character</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </>
+                  )}
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground text-sm">Caret</span>
+                    <Select
+                      onValueChange={(value) =>
+                        setCaret(value as "block" | "circle" | "none")
+                      }
+                      value={caret}
+                    >
+                      <SelectTrigger className="w-24" size="sm">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="block">Block ▋</SelectItem>
+                        <SelectItem value="circle">Circle ●</SelectItem>
+                        <SelectItem value="none">None</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <p className="font-medium text-sm">Streaming</p>
+                <div className="grid gap-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground text-sm">
+                      Chunk size
+                    </span>
+                    <Input
+                      className="w-24"
+                      min={1}
+                      max={200}
+                      onChange={(e) =>
+                        setChunkSize(Math.max(1, Number(e.target.value)))
+                      }
+                      type="number"
+                      value={chunkSize}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground text-sm">
+                      Delay (ms)
+                    </span>
+                    <Input
+                      className="w-24"
+                      min={1}
+                      max={1000}
+                      onChange={(e) =>
+                        setChunkDelay(Math.max(1, Number(e.target.value)))
+                      }
+                      type="number"
+                      value={chunkDelay}
+                    />
+                  </div>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
+          <Button
+            onClick={isStreaming ? stopStreaming : simulateStreaming}
+            size="sm"
+            variant={isStreaming ? "destructive" : "default"}
+          >
+            {isStreaming ? "Stop" : "Simulate Stream"}
+          </Button>
+          <Button
+            onClick={() => {
+              stopStreaming();
+              setMarkdown("");
+            }}
+            size="sm"
+            variant="outline"
+          >
             Clear
           </Button>
         </div>
@@ -302,7 +523,15 @@ const PlaygroundEditor = () => {
           <ScrollArea className="flex-1 overflow-y-auto">
             <div className="p-6">
               <div className="mx-auto max-w-prose">
-                <Streamdown mode={mode} plugins={{ code, mermaid, math, cjk }}>{markdown}</Streamdown>
+                <Streamdown
+                  animated={animated ? { animation, duration: animationDuration, easing: animationEasing, sep: animationSep } : false}
+                  caret={caret === "none" ? undefined : caret}
+                  isAnimating={isStreaming}
+                  mode={mode}
+                  plugins={{ code, mermaid, math, cjk }}
+                >
+                  {markdown}
+                </Streamdown>
               </div>
             </div>
           </ScrollArea>

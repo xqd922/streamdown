@@ -105,8 +105,8 @@ export const Demo = () => {
   }, [isInView]);
 
   return (
-    <Conversation className="h-[600px] overflow-y-auto rounded-sm border bg-background">
-      <ConversationContent>
+    <Conversation>
+      <ConversationContent className="h-[600px] overflow-y-auto rounded-sm border bg-background">
         <div className="mx-auto w-full max-w-prose p-12" ref={ref}>
           <Streamdown
             animated

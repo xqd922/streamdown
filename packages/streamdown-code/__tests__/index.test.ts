@@ -113,6 +113,115 @@ describe("code", () => {
       expect(cachedResult).toHaveProperty("tokens");
     });
 
+    it("should work without a callback", async () => {
+      const result = code.highlight({
+        code: "const z = 3;",
+        language: "javascript",
+        themes: ["github-light", "github-dark"],
+      });
+
+      // First call returns null (async loading)
+      expect(result).toBe(null);
+
+      // Wait for background highlighting to finish
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      // Second call should return cached result
+      const cached = code.highlight({
+        code: "const z = 3;",
+        language: "javascript",
+        themes: ["github-light", "github-dark"],
+      });
+
+      expect(cached).not.toBe(null);
+      expect(cached).toHaveProperty("tokens");
+    });
+
+    it("should handle code longer than 100 characters", async () => {
+      const longCode = `const a = 1;\nconst b = 2;\nconst c = 3;\nconst d = 4;\nconst e = 5;\nconst f = 6;\nconst g = 7;\nconst h = 8;`;
+      expect(longCode.length).toBeGreaterThan(100);
+
+      const callback = vi.fn();
+      code.highlight(
+        {
+          code: longCode,
+          language: "javascript",
+          themes: ["github-light", "github-dark"],
+        },
+        callback
+      );
+
+      await vi.waitFor(
+        () => {
+          expect(callback).toHaveBeenCalled();
+        },
+        { timeout: 5000 }
+      );
+
+      const result = callback.mock.calls[0][0];
+      expect(result).toHaveProperty("tokens");
+    });
+
+    it("should notify multiple subscribers for the same code", async () => {
+      const plugin = createCodePlugin({ themes: ["nord", "dracula"] });
+      const callback1 = vi.fn();
+      const callback2 = vi.fn();
+
+      plugin.highlight(
+        {
+          code: "const multi = 1;",
+          language: "javascript",
+          themes: ["nord", "dracula"],
+        },
+        callback1
+      );
+
+      // Second call before first resolves — adds second subscriber
+      plugin.highlight(
+        {
+          code: "const multi = 1;",
+          language: "javascript",
+          themes: ["nord", "dracula"],
+        },
+        callback2
+      );
+
+      await vi.waitFor(
+        () => {
+          expect(callback1).toHaveBeenCalled();
+          expect(callback2).toHaveBeenCalled();
+        },
+        { timeout: 5000 }
+      );
+
+      expect(callback1.mock.calls[0][0]).toHaveProperty("tokens");
+      expect(callback2.mock.calls[0][0]).toHaveProperty("tokens");
+    });
+
+    it("should fall back to text when language is not loaded", async () => {
+      const callback = vi.fn();
+      // "text" is a special language in shiki, not a bundled language
+      // so it won't be in getLoadedLanguages() as a bundled lang
+      code.highlight(
+        {
+          code: "hello world",
+          language: "text" as BundledLanguage,
+          themes: ["github-light", "github-dark"],
+        },
+        callback
+      );
+
+      await vi.waitFor(
+        () => {
+          expect(callback).toHaveBeenCalled();
+        },
+        { timeout: 5000 }
+      );
+
+      const result = callback.mock.calls[0][0];
+      expect(result).toHaveProperty("tokens");
+    });
+
     it("should highlight language aliases using bundled grammars", async () => {
       const callback = vi.fn();
       const result = code.highlight(

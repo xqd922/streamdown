@@ -126,13 +126,7 @@ export const Mermaid = ({
 
     // Default error display
     return (
-      <div
-        className={cn(
-          "rounded-lg border border-red-200 bg-red-50 p-4",
-          className
-        )}
-        ref={containerRef}
-      >
+      <div className={cn("bg-red-50 p-4", className)} ref={containerRef}>
         <p className="font-mono text-red-700 text-sm">Mermaid Error: {error}</p>
         <details className="mt-2">
           <summary className="cursor-pointer text-red-600 text-xs">

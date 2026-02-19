@@ -2,7 +2,10 @@ import { render, screen, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { describe, expect, it } from "vitest";
 import { Block, Streamdown, useIsCodeFenceIncomplete } from "../index";
-import { hasIncompleteCodeFence } from "../lib/incomplete-code-utils";
+import {
+  hasIncompleteCodeFence,
+  hasTable,
+} from "../lib/incomplete-code-utils";
 import type { ExtraProps } from "../lib/markdown";
 
 describe("hasIncompleteCodeFence utility", () => {
@@ -99,6 +102,50 @@ describe("hasIncompleteCodeFence utility", () => {
     expect(hasIncompleteCodeFence("```\ncode\n~~~")).toBe(true);
     // Opening with tildes, closing with backticks should not close
     expect(hasIncompleteCodeFence("~~~\ncode\n```")).toBe(true);
+  });
+});
+
+describe("hasTable utility", () => {
+  it("should detect a basic GFM table", () => {
+    expect(hasTable("| Name | Age |\n| --- | --- |\n| Alice | 30 |")).toBe(
+      true
+    );
+  });
+
+  it("should detect a table with alignment markers", () => {
+    expect(hasTable("| Left | Center | Right |\n| :--- | :---: | ---: |")).toBe(
+      true
+    );
+  });
+
+  it("should detect a table with only delimiter row streamed", () => {
+    expect(hasTable("| Header |\n| --- |")).toBe(true);
+  });
+
+  it("should detect a table without leading pipes", () => {
+    expect(hasTable("Name | Age\n--- | ---\nAlice | 30")).toBe(true);
+  });
+
+  it("should return false for regular text", () => {
+    expect(hasTable("Just some regular text")).toBe(false);
+  });
+
+  it("should return false for a heading with dashes", () => {
+    expect(hasTable("# My Heading\n\nSome text")).toBe(false);
+  });
+
+  it("should return false for a horizontal rule", () => {
+    expect(hasTable("Some text\n\n---\n\nMore text")).toBe(false);
+  });
+
+  it("should return false for empty string", () => {
+    expect(hasTable("")).toBe(false);
+  });
+
+  it("should detect table in mixed content", () => {
+    expect(
+      hasTable("Some intro text\n\n| Col |\n| --- |\n| Val |")
+    ).toBe(true);
   });
 });
 

@@ -6,6 +6,13 @@
 const CODE_FENCE_PATTERN = /^[ \t]{0,3}(`{3,}|~{3,})/;
 
 /**
+ * Regex matching a GFM table delimiter row.
+ * Matches rows like `| --- | --- |`, `|---|---|`, `| :---: | ---: |`, etc.
+ */
+const TABLE_DELIMITER_PATTERN =
+  /^\|?[ \t]*:?-{1,}:?[ \t]*(\|[ \t]*:?-{1,}:?[ \t]*)*\|?$/;
+
+/**
  * Checks if a markdown string contains an incomplete (unclosed) code fence
  * by walking line-by-line per the CommonMark spec.
  *
@@ -51,4 +58,30 @@ export const hasIncompleteCodeFence = (markdown: string): boolean => {
   }
 
   return openFenceChar !== null;
+};
+
+/**
+ * Checks if a markdown block contains a GFM table by looking for a
+ * delimiter row (e.g., `| --- | --- |`). A delimiter row confirms that
+ * the preceding header row forms a table.
+ *
+ * @param markdown - The markdown string to check
+ * @returns true if the block contains a table
+ */
+export const hasTable = (markdown: string): boolean => {
+  const lines = markdown.split("\n");
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    // Must contain a pipe to distinguish from horizontal rules (---)
+    if (
+      trimmed.length > 0 &&
+      trimmed.includes("|") &&
+      TABLE_DELIMITER_PATTERN.test(trimmed)
+    ) {
+      return true;
+    }
+  }
+
+  return false;
 };

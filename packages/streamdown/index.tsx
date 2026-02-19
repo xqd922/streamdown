@@ -21,7 +21,10 @@ import type { Pluggable } from "unified";
 import { type AnimateOptions, createAnimatePlugin } from "./lib/animate";
 import { BlockIncompleteContext } from "./lib/block-incomplete-context";
 import { components as defaultComponents } from "./lib/components";
-import { hasIncompleteCodeFence } from "./lib/incomplete-code-utils";
+import {
+  hasIncompleteCodeFence,
+  hasTable,
+} from "./lib/incomplete-code-utils";
 import { Markdown, type Options } from "./lib/markdown";
 import { parseMarkdownIntoBlocks } from "./lib/parse-blocks";
 import { preprocessCustomTags } from "./lib/preprocess-custom-tags";
@@ -482,14 +485,22 @@ export const Streamdown = memo(
       return result;
     }, [rehypePlugins, plugins?.math, animatePlugin, isAnimating, allowedTags]);
 
+    const shouldHideCaret = useMemo(() => {
+      if (!isAnimating || blocksToRender.length === 0) {
+        return false;
+      }
+      const lastBlock = blocksToRender[blocksToRender.length - 1];
+      return hasIncompleteCodeFence(lastBlock) || hasTable(lastBlock);
+    }, [isAnimating, blocksToRender]);
+
     const style = useMemo(
       () =>
-        caret && isAnimating
+        caret && isAnimating && !shouldHideCaret
           ? ({
               "--streamdown-caret": `"${carets[caret]}"`,
             } as CSSProperties)
           : undefined,
-      [caret, isAnimating]
+      [caret, isAnimating, shouldHideCaret]
     );
 
     // Static mode: simple rendering without streaming features
@@ -524,7 +535,7 @@ export const Streamdown = memo(
           <div
             className={cn(
               "space-y-4 whitespace-normal *:first:mt-0 *:last:mb-0",
-              caret
+              caret && !shouldHideCaret
                 ? "*:last:after:inline *:last:after:align-baseline *:last:after:content-[var(--streamdown-caret)]"
                 : null,
               className

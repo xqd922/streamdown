@@ -39,7 +39,12 @@ describe("svgToPngBlob", () => {
     };
 
     originalImage = globalThis.Image;
-    globalThis.Image = (() => mockImage) as any;
+    globalThis.Image = class {
+      constructor() {
+        // biome-ignore lint/correctness/noConstructorReturn: need constructor mock to return shared mockImage
+        return mockImage;
+      }
+    } as any;
   });
 
   afterEach(() => {

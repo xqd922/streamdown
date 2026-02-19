@@ -260,10 +260,14 @@ describe("TableCopyDropdown", () => {
     });
     // Mock ClipboardItem if not present
     if (!globalThis.ClipboardItem) {
-      globalThis.ClipboardItem = ((data: Record<string, Blob>) => ({
-        types: Object.keys(data),
-        data,
-      })) as any;
+      globalThis.ClipboardItem = class {
+        types: string[];
+        data: Record<string, Blob>;
+        constructor(data: Record<string, Blob>) {
+          this.types = Object.keys(data);
+          this.data = data;
+        }
+      } as any;
     }
   });
 
@@ -297,7 +301,8 @@ describe("TableCopyDropdown", () => {
     );
     expect(mdBtn).toBeTruthy();
 
-    await act(() => {
+    // biome-ignore lint/suspicious/useAwait: act needs async to flush clipboard promises
+    await act(async () => {
       // biome-ignore lint/style/noNonNullAssertion: test assertion
       fireEvent.click(mdBtn!);
     });
@@ -317,7 +322,8 @@ describe("TableCopyDropdown", () => {
     fireEvent.click(toggleBtn!);
 
     const csvBtn = container.querySelector('button[title="Copy table as CSV"]');
-    await act(() => {
+    // biome-ignore lint/suspicious/useAwait: act needs async to flush clipboard promises
+    await act(async () => {
       // biome-ignore lint/style/noNonNullAssertion: test assertion
       fireEvent.click(csvBtn!);
     });
@@ -336,7 +342,8 @@ describe("TableCopyDropdown", () => {
     fireEvent.click(toggleBtn!);
 
     const tsvBtn = container.querySelector('button[title="Copy table as TSV"]');
-    await act(() => {
+    // biome-ignore lint/suspicious/useAwait: act needs async to flush clipboard promises
+    await act(async () => {
       // biome-ignore lint/style/noNonNullAssertion: test assertion
       fireEvent.click(tsvBtn!);
     });

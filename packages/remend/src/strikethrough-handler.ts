@@ -21,7 +21,8 @@ export const handleIncompleteStrikethrough = (text: string): string => {
       return text;
     }
 
-    const tildePairs = (text.match(doubleTildeGlobalPattern) || []).length;
+    // doubleTildeGlobalPattern always matches when strikethroughPattern matched
+    const tildePairs = text.match(doubleTildeGlobalPattern)!.length;
     if (tildePairs % 2 === 1) {
       return `${text}~~`;
     }
@@ -30,7 +31,8 @@ export const handleIncompleteStrikethrough = (text: string): string => {
     // The pattern /(~~)([^~]*?)$/ won't match ~~content~ because it ends with ~
     const halfCompleteMatch = text.match(halfCompleteTildePattern);
     if (halfCompleteMatch) {
-      const tildePairs = (text.match(doubleTildeGlobalPattern) || []).length;
+      // doubleTildeGlobalPattern always matches when halfCompleteTildePattern matched
+      const tildePairs = text.match(doubleTildeGlobalPattern)!.length;
       if (tildePairs % 2 === 1) {
         return `${text}~`;
       }

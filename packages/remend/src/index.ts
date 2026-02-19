@@ -254,10 +254,9 @@ const remend = (text: string, options?: RemendOptions): string => {
   }));
 
   // Merge and sort by priority
+  // Priority is always set: built-ins have explicit priority, customs get default at line 252
   const allHandlers = [...enabledBuiltIns, ...customHandlers].sort(
-    (a, b) =>
-      (a.handler.priority ?? PRIORITY.DEFAULT) -
-      (b.handler.priority ?? PRIORITY.DEFAULT)
+    (a, b) => a.handler.priority! - b.handler.priority!
   );
 
   // Execute handlers in priority order

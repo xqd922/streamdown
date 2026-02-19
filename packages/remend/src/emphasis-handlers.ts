@@ -18,35 +18,6 @@ import {
   isWordChar,
 } from "./utils";
 
-// Helper function to check if an asterisk at the given index is a list marker
-const isAsteriskListMarker = (
-  text: string,
-  index: number,
-  nextChar: string
-): boolean => {
-  if (nextChar !== " " && nextChar !== "\t") {
-    return false;
-  }
-
-  // Look backwards to find the start of the current line
-  let lineStartIndex = 0;
-  for (let i = index - 1; i >= 0; i -= 1) {
-    if (text[i] === "\n") {
-      lineStartIndex = i + 1;
-      break;
-    }
-  }
-
-  // Check if this asterisk is at the beginning of a line (with optional whitespace)
-  for (let i = lineStartIndex; i < index; i += 1) {
-    if (text[i] !== " " && text[i] !== "\t") {
-      return false;
-    }
-  }
-
-  return true;
-};
-
 // Helper function to check if an asterisk should be skipped
 const shouldSkipAsterisk = (
   text: string,
@@ -90,16 +61,12 @@ const shouldSkipAsterisk = (
   }
 
   // Skip if flanked by whitespace on both sides (not a valid emphasis delimiter per CommonMark)
+  // This also catches list markers (e.g., "* item") since they have whitespace on both sides
   const prevIsWhitespace =
     !prevChar || prevChar === " " || prevChar === "\t" || prevChar === "\n";
   const nextIsWhitespace =
     !nextChar || nextChar === " " || nextChar === "\t" || nextChar === "\n";
   if (prevIsWhitespace && nextIsWhitespace) {
-    return true;
-  }
-
-  // Skip if this is a list marker
-  if (isAsteriskListMarker(text, index, nextChar)) {
     return true;
   }
 
@@ -540,11 +507,6 @@ export const handleIncompleteSingleAsteriskItalic = (text: string): string => {
     return text;
   }
 
-  // Check if the asterisk is within a code block
-  if (isWithinCodeBlock(text, firstSingleAsteriskIndex)) {
-    return text;
-  }
-
   // Get content after the first single asterisk
   const contentAfterFirstAsterisk = text.substring(
     firstSingleAsteriskIndex + 1
@@ -676,11 +638,6 @@ export const handleIncompleteSingleUnderscoreItalic = (
   const firstSingleUnderscoreIndex = findFirstSingleUnderscoreIndex(text);
 
   if (firstSingleUnderscoreIndex === -1) {
-    return text;
-  }
-
-  // Check if the underscore is within a code block
-  if (isWithinCodeBlock(text, firstSingleUnderscoreIndex)) {
     return text;
   }
 

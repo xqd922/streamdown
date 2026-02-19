@@ -486,7 +486,7 @@ export const Streamdown = memo(
       if (!isAnimating || blocksToRender.length === 0) {
         return false;
       }
-      const lastBlock = blocksToRender.at(-1);
+      const lastBlock = blocksToRender.at(-1) as string;
       return hasIncompleteCodeFence(lastBlock) || hasTable(lastBlock);
     }, [isAnimating, blocksToRender]);
 

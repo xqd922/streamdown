@@ -1,11 +1,10 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { components as importedComponents } from "../lib/components";
-import { Markdown } from "../lib/markdown";
 import type { Options } from "../lib/markdown";
+import { Markdown } from "../lib/markdown";
 
-type RequiredComponents = Required<NonNullable<Options["components"]>>;
-const components = importedComponents as RequiredComponents;
+type _RequiredComponents = Required<NonNullable<Options["components"]>>;
 
 describe("MemoParagraph block code unwrapping", () => {
   it("should unwrap paragraph containing only block code (data-block)", () => {
@@ -92,6 +91,8 @@ describe("shouldShowControls / shouldShowMermaidControl edge cases", () => {
         components: importedComponents,
       })
     );
-    expect(container.querySelector('[data-streamdown="code-block"]')).toBeTruthy();
+    expect(
+      container.querySelector('[data-streamdown="code-block"]')
+    ).toBeTruthy();
   });
 });

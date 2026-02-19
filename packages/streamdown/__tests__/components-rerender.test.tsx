@@ -1,8 +1,8 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { StreamdownContext } from "../index";
-import { components } from "../lib/components";
-import { Markdown } from "../lib/markdown";
+import { components as importedComponents } from "../lib/components";
+import type { Options } from "../lib/markdown";
 import { PluginContext } from "../lib/plugin-context";
 
 // Mock mermaid
@@ -13,32 +13,35 @@ vi.mock("../lib/mermaid", () => ({
 }));
 
 // Get individual components
-const Ol = components!.ol!;
-const Li = components!.li!;
-const Ul = components!.ul!;
-const Hr = components!.hr!;
-const Strong = components!.strong!;
-const A = components!.a!;
-const H1 = components!.h1!;
-const H2 = components!.h2!;
-const H3 = components!.h3!;
-const H4 = components!.h4!;
-const H5 = components!.h5!;
-const H6 = components!.h6!;
-const MemoTable = components!.table!;
-const Thead = components!.thead!;
-const Tbody = components!.tbody!;
-const Tr = components!.tr!;
-const Th = components!.th!;
-const Td = components!.td!;
-const Blockquote = components!.blockquote!;
-const Code = components!.code!;
-const Img = components!.img!;
-const Pre = components!.pre!;
-const Sup = components!.sup!;
-const Sub = components!.sub!;
-const P = components!.p!;
-const Section = components!.section!;
+const components = importedComponents as Required<
+  NonNullable<Options["components"]>
+>;
+const Ol = components.ol;
+const Li = components.li;
+const Ul = components.ul;
+const Hr = components.hr;
+const Strong = components.strong;
+const A = components.a;
+const H1 = components.h1;
+const H2 = components.h2;
+const H3 = components.h3;
+const H4 = components.h4;
+const H5 = components.h5;
+const H6 = components.h6;
+const MemoTable = components.table;
+const Thead = components.thead;
+const Tbody = components.tbody;
+const Tr = components.tr;
+const Th = components.th;
+const Td = components.td;
+const Blockquote = components.blockquote;
+const Code = components.code;
+const Img = components.img;
+const _Pre = components.pre;
+const Sup = components.sup;
+const Sub = components.sub;
+const P = components.p;
+const Section = components.section;
 
 // Wrapper to trigger re-renders
 const ReRenderWrapper = ({
@@ -342,7 +345,7 @@ describe("Memo comparators - re-render triggers", () => {
         }}
       >
         <ReRenderWrapper count={0}>
-          <Img src="https://example.com/img.png" alt="test" />
+          <Img alt="test" src="https://example.com/img.png" />
         </ReRenderWrapper>
       </StreamdownContext.Provider>
     );
@@ -356,7 +359,7 @@ describe("Memo comparators - re-render triggers", () => {
         }}
       >
         <ReRenderWrapper count={1}>
-          <Img src="https://example.com/img.png" alt="test" />
+          <Img alt="test" src="https://example.com/img.png" />
         </ReRenderWrapper>
       </StreamdownContext.Provider>
     );
@@ -395,7 +398,9 @@ describe("Memo comparators - re-render triggers", () => {
 describe("sameNodePosition edge cases", () => {
   it("should return false when one has position and other doesn't", () => {
     // This tests line 63: if (!(prev?.position && next?.position)) return false
-    const nodeWithPos = { position: { start: { line: 1, column: 1 }, end: { line: 1, column: 5 } } };
+    const nodeWithPos = {
+      position: { start: { line: 1, column: 1 }, end: { line: 1, column: 5 } },
+    };
     const nodeWithoutPos = {};
 
     // Render the component with position, then without
@@ -422,11 +427,13 @@ describe("sameNodePosition edge cases", () => {
 describe("MemoParagraph block code unwrapping with data-block", () => {
   it("should unwrap block code child from paragraph (line 864)", () => {
     // Create a code element with data-block prop
-    const codeChild = <code data-block="true" className="language-js">const x = 1;</code>;
-
-    const { container } = render(
-      <P>{codeChild}</P>
+    const codeChild = (
+      <code className="language-js" data-block="true">
+        const x = 1;
+      </code>
     );
+
+    const { container } = render(<P>{codeChild}</P>);
 
     // The paragraph should NOT wrap block code - it should return <>{children}</>
     // Since the code has data-block and tagName checking looks at node.tagName,

@@ -99,9 +99,7 @@ describe("MemoParagraph block code unwrapping (line 864)", () => {
     const paragraphs = container.querySelectorAll("p");
     for (const p of paragraphs) {
       // No paragraph should contain a code block
-      expect(
-        p.querySelector('[data-streamdown="code-block"]')
-      ).toBeFalsy();
+      expect(p.querySelector('[data-streamdown="code-block"]')).toBeFalsy();
     }
   });
 });

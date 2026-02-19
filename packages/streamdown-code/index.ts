@@ -32,8 +32,14 @@ export interface HighlightOptions {
  * Plugin for code syntax highlighting (Shiki)
  */
 export interface CodeHighlighterPlugin {
-  name: "shiki";
-  type: "code-highlighter";
+  /**
+   * Get list of supported languages
+   */
+  getSupportedLanguages: () => BundledLanguage[];
+  /**
+   * Get the configured themes
+   */
+  getThemes: () => [BundledTheme, BundledTheme];
   /**
    * Highlight code and return tokens
    * Returns null if highlighting not ready yet (async loading)
@@ -43,18 +49,12 @@ export interface CodeHighlighterPlugin {
     options: HighlightOptions,
     callback?: (result: HighlightResult) => void
   ) => HighlightResult | null;
+  name: "shiki";
   /**
    * Check if language is supported
    */
   supportsLanguage: (language: BundledLanguage) => boolean;
-  /**
-   * Get list of supported languages
-   */
-  getSupportedLanguages: () => BundledLanguage[];
-  /**
-   * Get the configured themes
-   */
-  getThemes: () => [BundledTheme, BundledTheme];
+  type: "code-highlighter";
 }
 
 /**

@@ -100,8 +100,7 @@ const handleIncompleteText = (
       // Find the first incomplete [ and strip just that bracket
       const firstIncomplete = findFirstIncompleteBracket(text, i);
       return (
-        text.substring(0, firstIncomplete) +
-        text.substring(firstIncomplete + 1)
+        text.substring(0, firstIncomplete) + text.substring(firstIncomplete + 1)
       );
     }
     // Preserve the text and close the link with a placeholder URL
@@ -123,8 +122,7 @@ const handleIncompleteText = (
       // Find the first incomplete [ and strip just that bracket
       const firstIncomplete = findFirstIncompleteBracket(text, i);
       return (
-        text.substring(0, firstIncomplete) +
-        text.substring(firstIncomplete + 1)
+        text.substring(0, firstIncomplete) + text.substring(firstIncomplete + 1)
       );
     }
     return `${text}](streamdown:incomplete-link)`;

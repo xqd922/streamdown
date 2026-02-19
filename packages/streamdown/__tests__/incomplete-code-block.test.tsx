@@ -2,10 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { describe, expect, it } from "vitest";
 import { Block, Streamdown, useIsCodeFenceIncomplete } from "../index";
-import {
-  hasIncompleteCodeFence,
-  hasTable,
-} from "../lib/incomplete-code-utils";
+import { hasIncompleteCodeFence, hasTable } from "../lib/incomplete-code-utils";
 import type { ExtraProps } from "../lib/markdown";
 
 describe("hasIncompleteCodeFence utility", () => {
@@ -85,9 +82,9 @@ describe("hasIncompleteCodeFence utility", () => {
   it("should not false-positive on inline backticks in prose", () => {
     // Triple backticks in the middle of a line are not code fences
     expect(hasIncompleteCodeFence("Use ``` to start a code fence")).toBe(false);
-    expect(
-      hasIncompleteCodeFence("The syntax is ``` for code blocks")
-    ).toBe(false);
+    expect(hasIncompleteCodeFence("The syntax is ``` for code blocks")).toBe(
+      false
+    );
   });
 
   it("should allow up to 3 spaces of indentation for fences", () => {
@@ -143,9 +140,7 @@ describe("hasTable utility", () => {
   });
 
   it("should detect table in mixed content", () => {
-    expect(
-      hasTable("Some intro text\n\n| Col |\n| --- |\n| Val |")
-    ).toBe(true);
+    expect(hasTable("Some intro text\n\n| Col |\n| --- |\n| Val |")).toBe(true);
   });
 });
 

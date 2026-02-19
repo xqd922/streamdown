@@ -1,8 +1,11 @@
-import { act, fireEvent, render, waitFor } from "@testing-library/react";
+import { act, fireEvent, render } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { StreamdownContext } from "../index";
 import { TableCopyDropdown } from "../lib/table/copy-dropdown";
-import { TableDownloadButton, TableDownloadDropdown } from "../lib/table/download-dropdown";
+import {
+  TableDownloadButton,
+  TableDownloadDropdown,
+} from "../lib/table/download-dropdown";
 
 vi.mock("../lib/utils", async () => {
   const actual = await vi.importActual("../lib/utils");
@@ -63,14 +66,22 @@ describe("TableDownloadDropdown", () => {
     // Open dropdown
     const toggleBtn = container.querySelector('button[title="Download table"]');
     expect(toggleBtn).toBeTruthy();
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(toggleBtn!);
 
     // Click CSV option
-    const csvBtn = container.querySelector('button[title="Download table as CSV"]');
+    const csvBtn = container.querySelector(
+      'button[title="Download table as CSV"]'
+    );
     expect(csvBtn).toBeTruthy();
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(csvBtn!);
 
-    expect(save).toHaveBeenCalledWith("table.csv", expect.any(String), "text/csv");
+    expect(save).toHaveBeenCalledWith(
+      "table.csv",
+      expect.any(String),
+      "text/csv"
+    );
     expect(onDownload).toHaveBeenCalledWith("csv");
   });
 
@@ -84,6 +95,7 @@ describe("TableDownloadDropdown", () => {
 
     // Open dropdown
     const toggleBtn = container.querySelector('button[title="Download table"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(toggleBtn!);
 
     // Click Markdown option
@@ -91,9 +103,14 @@ describe("TableDownloadDropdown", () => {
       'button[title="Download table as Markdown"]'
     );
     expect(mdBtn).toBeTruthy();
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(mdBtn!);
 
-    expect(save).toHaveBeenCalledWith("table.md", expect.any(String), "text/markdown");
+    expect(save).toHaveBeenCalledWith(
+      "table.md",
+      expect.any(String),
+      "text/markdown"
+    );
     expect(onDownload).toHaveBeenCalledWith("markdown");
   });
 
@@ -109,9 +126,13 @@ describe("TableDownloadDropdown", () => {
     );
 
     const toggleBtn = container.querySelector('button[title="Download table"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(toggleBtn!);
 
-    const csvBtn = container.querySelector('button[title="Download table as CSV"]');
+    const csvBtn = container.querySelector(
+      'button[title="Download table as CSV"]'
+    );
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(csvBtn!);
 
     expect(onError).toHaveBeenCalledWith(expect.any(Error));
@@ -122,6 +143,7 @@ describe("TableDownloadDropdown", () => {
 
     // Open dropdown
     const toggleBtn = container.querySelector('button[title="Download table"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(toggleBtn!);
 
     // Verify dropdown is open
@@ -138,7 +160,7 @@ describe("TableDownloadDropdown", () => {
     ).toBeFalsy();
   });
 
-  it("should call onError when no table found", async () => {
+  it("should call onError when no table found", () => {
     const onError = vi.fn();
     const { container } = render(
       <StreamdownContext.Provider
@@ -154,9 +176,13 @@ describe("TableDownloadDropdown", () => {
     );
 
     const toggleBtn = container.querySelector('button[title="Download table"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(toggleBtn!);
 
-    const csvBtn = container.querySelector('button[title="Download table as CSV"]');
+    const csvBtn = container.querySelector(
+      'button[title="Download table as CSV"]'
+    );
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(csvBtn!);
 
     expect(onError).toHaveBeenCalledWith(expect.any(Error));
@@ -168,7 +194,7 @@ describe("TableDownloadButton with format='markdown'", () => {
     vi.clearAllMocks();
   });
 
-  it("should download as markdown format", async () => {
+  it("should download as markdown format", () => {
     const onDownload = vi.fn();
     const { container } = renderInTableWrapper(
       <TableDownloadButton format="markdown" onDownload={onDownload} />
@@ -178,6 +204,7 @@ describe("TableDownloadButton with format='markdown'", () => {
       'button[title="Download table as MARKDOWN"]'
     );
     expect(btn).toBeTruthy();
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(btn!);
 
     expect(onDownload).toHaveBeenCalled();
@@ -190,6 +217,7 @@ describe("TableDownloadButton with format='markdown'", () => {
 
     const btn = container.querySelector("button[title]");
     expect(btn).toBeTruthy();
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(btn!);
   });
 
@@ -209,6 +237,7 @@ describe("TableDownloadButton with format='markdown'", () => {
     );
 
     const btn = container.querySelector("button");
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(btn!);
 
     expect(onError).toHaveBeenCalledWith(expect.any(Error));
@@ -231,9 +260,10 @@ describe("TableCopyDropdown", () => {
     });
     // Mock ClipboardItem if not present
     if (!globalThis.ClipboardItem) {
-      globalThis.ClipboardItem = function (data: Record<string, Blob>) {
-        return { types: Object.keys(data), data };
-      } as any;
+      globalThis.ClipboardItem = ((data: Record<string, Blob>) => ({
+        types: Object.keys(data),
+        data,
+      })) as any;
     }
   });
 
@@ -258,13 +288,17 @@ describe("TableCopyDropdown", () => {
     // Open dropdown
     const toggleBtn = container.querySelector('button[title="Copy table"]');
     expect(toggleBtn).toBeTruthy();
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(toggleBtn!);
 
     // Click Markdown option (line 114)
-    const mdBtn = container.querySelector('button[title="Copy table as Markdown"]');
+    const mdBtn = container.querySelector(
+      'button[title="Copy table as Markdown"]'
+    );
     expect(mdBtn).toBeTruthy();
 
-    await act(async () => {
+    await act(() => {
+      // biome-ignore lint/style/noNonNullAssertion: test assertion
       fireEvent.click(mdBtn!);
     });
 
@@ -279,10 +313,12 @@ describe("TableCopyDropdown", () => {
     );
 
     const toggleBtn = container.querySelector('button[title="Copy table"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(toggleBtn!);
 
     const csvBtn = container.querySelector('button[title="Copy table as CSV"]');
-    await act(async () => {
+    await act(() => {
+      // biome-ignore lint/style/noNonNullAssertion: test assertion
       fireEvent.click(csvBtn!);
     });
 
@@ -296,10 +332,12 @@ describe("TableCopyDropdown", () => {
     );
 
     const toggleBtn = container.querySelector('button[title="Copy table"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(toggleBtn!);
 
     const tsvBtn = container.querySelector('button[title="Copy table as TSV"]');
-    await act(async () => {
+    await act(() => {
+      // biome-ignore lint/style/noNonNullAssertion: test assertion
       fireEvent.click(tsvBtn!);
     });
 
@@ -319,10 +357,14 @@ describe("TableCopyDropdown", () => {
     );
 
     const toggleBtn = container.querySelector('button[title="Copy table"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(toggleBtn!);
 
-    const mdBtn = container.querySelector('button[title="Copy table as Markdown"]');
-    await act(async () => {
+    const mdBtn = container.querySelector(
+      'button[title="Copy table as Markdown"]'
+    );
+    await act(() => {
+      // biome-ignore lint/style/noNonNullAssertion: test assertion
       fireEvent.click(mdBtn!);
     });
 
@@ -345,10 +387,14 @@ describe("TableCopyDropdown", () => {
     );
 
     const toggleBtn = container.querySelector('button[title="Copy table"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(toggleBtn!);
 
-    const mdBtn = container.querySelector('button[title="Copy table as Markdown"]');
-    await act(async () => {
+    const mdBtn = container.querySelector(
+      'button[title="Copy table as Markdown"]'
+    );
+    await act(() => {
+      // biome-ignore lint/style/noNonNullAssertion: test assertion
       fireEvent.click(mdBtn!);
     });
 
@@ -359,6 +405,7 @@ describe("TableCopyDropdown", () => {
     const { container } = renderInTableWrapper(<TableCopyDropdown />);
 
     const toggleBtn = container.querySelector('button[title="Copy table"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(toggleBtn!);
 
     expect(
@@ -387,10 +434,14 @@ describe("TableCopyDropdown", () => {
     );
 
     const toggleBtn = container.querySelector('button[title="Copy table"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(toggleBtn!);
 
-    const mdBtn = container.querySelector('button[title="Copy table as Markdown"]');
-    await act(async () => {
+    const mdBtn = container.querySelector(
+      'button[title="Copy table as Markdown"]'
+    );
+    await act(() => {
+      // biome-ignore lint/style/noNonNullAssertion: test assertion
       fireEvent.click(mdBtn!);
     });
 

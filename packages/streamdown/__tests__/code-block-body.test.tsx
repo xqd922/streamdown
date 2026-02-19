@@ -11,12 +11,10 @@ describe("CodeBlockBody", () => {
 
   it("should render with basic result", () => {
     const { container } = render(
-      <CodeBlockBody result={baseResult} language="javascript" />
+      <CodeBlockBody language="javascript" result={baseResult} />
     );
 
-    const body = container.querySelector(
-      '[data-streamdown="code-block-body"]'
-    );
+    const body = container.querySelector('[data-streamdown="code-block-body"]');
     expect(body).toBeTruthy();
     expect(body?.getAttribute("data-language")).toBe("javascript");
   });
@@ -24,8 +22,8 @@ describe("CodeBlockBody", () => {
   it("should set CSS custom properties for bg and fg", () => {
     const { container } = render(
       <CodeBlockBody
-        result={{ ...baseResult, bg: "#1e1e1e", fg: "#d4d4d4" }}
         language="javascript"
+        result={{ ...baseResult, bg: "#1e1e1e", fg: "#d4d4d4" }}
       />
     );
 
@@ -37,11 +35,11 @@ describe("CodeBlockBody", () => {
   it("should parse rootStyle CSS variables", () => {
     const { container } = render(
       <CodeBlockBody
+        language="javascript"
         result={{
           ...baseResult,
           rootStyle: "--shiki-dark-bg:#222;--shiki-dark-fg:#eee",
         }}
-        language="javascript"
       />
     );
 
@@ -53,11 +51,11 @@ describe("CodeBlockBody", () => {
   it("should handle rootStyle with spaces and empty declarations", () => {
     const { container } = render(
       <CodeBlockBody
+        language="javascript"
         result={{
           ...baseResult,
           rootStyle: " --a : red ; ; --b: blue ",
         }}
-        language="javascript"
       />
     );
 
@@ -69,8 +67,8 @@ describe("CodeBlockBody", () => {
   it("should handle no bg or fg in result", () => {
     const { container } = render(
       <CodeBlockBody
-        result={{ tokens: [[{ content: "test" }]] }}
         language="text"
+        result={{ tokens: [[{ content: "test" }]] }}
       />
     );
 
@@ -92,7 +90,7 @@ describe("CodeBlockBody", () => {
     };
 
     const { container } = render(
-      <CodeBlockBody result={result} language="javascript" />
+      <CodeBlockBody language="javascript" result={result} />
     );
 
     const tokenSpan = container.querySelector("code span span");
@@ -112,7 +110,7 @@ describe("CodeBlockBody", () => {
     };
 
     const { container } = render(
-      <CodeBlockBody result={result} language="javascript" />
+      <CodeBlockBody language="javascript" result={result} />
     );
 
     const tokenSpan = container.querySelector("code span span");
@@ -133,7 +131,7 @@ describe("CodeBlockBody", () => {
     };
 
     const { container } = render(
-      <CodeBlockBody result={result} language="javascript" />
+      <CodeBlockBody language="javascript" result={result} />
     );
 
     const tokenSpan = container.querySelector("code span span");
@@ -153,7 +151,7 @@ describe("CodeBlockBody", () => {
     };
 
     const { container } = render(
-      <CodeBlockBody result={result} language="javascript" />
+      <CodeBlockBody language="javascript" result={result} />
     );
 
     const tokenSpan = container.querySelector("code span span");
@@ -171,7 +169,7 @@ describe("CodeBlockBody", () => {
     };
 
     const { container } = render(
-      <CodeBlockBody result={result} language="text" />
+      <CodeBlockBody language="text" result={result} />
     );
 
     const lineSpans = container.querySelectorAll("code > span");
@@ -184,7 +182,7 @@ describe("CodeBlockBody", () => {
     };
 
     const { container } = render(
-      <CodeBlockBody result={result} language="text" />
+      <CodeBlockBody language="text" result={result} />
     );
 
     const tokenSpan = container.querySelector("code span span");

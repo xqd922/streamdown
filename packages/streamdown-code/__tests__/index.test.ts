@@ -138,7 +138,8 @@ describe("code", () => {
     });
 
     it("should handle code longer than 100 characters", async () => {
-      const longCode = `const a = 1;\nconst b = 2;\nconst c = 3;\nconst d = 4;\nconst e = 5;\nconst f = 6;\nconst g = 7;\nconst h = 8;`;
+      const longCode =
+        "const a = 1;\nconst b = 2;\nconst c = 3;\nconst d = 4;\nconst e = 5;\nconst f = 6;\nconst g = 7;\nconst h = 8;";
       expect(longCode.length).toBeGreaterThan(100);
 
       const callback = vi.fn();

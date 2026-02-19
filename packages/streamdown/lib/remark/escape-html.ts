@@ -8,7 +8,9 @@ import { visit } from "unist-util-visit";
 export const remarkEscapeHtml: Plugin<[], Root> = () => (tree) => {
   visit(tree, "html", (node: HTML, index: number | null, parent?: Parent) => {
     /* v8 ignore next */
-    if (!parent || typeof index !== "number") return;
+    if (!parent || typeof index !== "number") {
+      return;
+    }
 
     // Convert HTML node to text node - React will handle escaping
     parent.children[index] = {

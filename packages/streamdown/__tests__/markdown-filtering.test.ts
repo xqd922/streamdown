@@ -1,19 +1,21 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { Markdown, defaultUrlTransform } from "../lib/markdown";
+import { defaultUrlTransform, Markdown } from "../lib/markdown";
 
 describe("Markdown post-processing", () => {
   describe("defaultUrlTransform", () => {
     it("should pass through URLs unchanged", () => {
-      expect(defaultUrlTransform("https://example.com", "href", {} as any)).toBe(
-        "https://example.com"
-      );
+      expect(
+        defaultUrlTransform("https://example.com", "href", {} as any)
+      ).toBe("https://example.com");
     });
   });
 
   describe("urlTransform", () => {
     it("should transform URLs when urlTransform is provided", () => {
-      const transform = vi.fn().mockReturnValue("https://proxied.com/image.png");
+      const transform = vi
+        .fn()
+        .mockReturnValue("https://proxied.com/image.png");
       const { container } = render(
         Markdown({
           children: "![alt](https://example.com/image.png)",

@@ -6,12 +6,12 @@ import { cn } from "../utils";
 interface PanZoomProps {
   children: ReactNode;
   className?: string;
-  minZoom?: number;
-  maxZoom?: number;
-  zoomStep?: number;
-  showControls?: boolean;
-  initialZoom?: number;
   fullscreen?: boolean;
+  initialZoom?: number;
+  maxZoom?: number;
+  minZoom?: number;
+  showControls?: boolean;
+  zoomStep?: number;
 }
 
 export const PanZoom = ({
@@ -85,7 +85,9 @@ export const PanZoom = ({
   const handlePointerMove = useCallback(
     (e: PointerEvent) => {
       /* v8 ignore next */
-      if (!isPanning) return;
+      if (!isPanning) {
+        return;
+      }
       e.preventDefault();
       const deltaX = e.clientX - panStart.x;
       const deltaY = e.clientY - panStart.y;
@@ -109,7 +111,9 @@ export const PanZoom = ({
   useEffect(() => {
     const container = containerRef.current;
     /* v8 ignore next */
-    if (!container) return;
+    if (!container) {
+      return;
+    }
 
     container.addEventListener("wheel", handleWheel, { passive: false });
 
@@ -121,7 +125,9 @@ export const PanZoom = ({
   useEffect(() => {
     const content = contentRef.current;
     /* v8 ignore next */
-    if (!content) return;
+    if (!content) {
+      return;
+    }
 
     if (isPanning) {
       // Prevent text selection while panning

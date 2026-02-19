@@ -1,19 +1,23 @@
-import { createElement, type ReactNode } from "react";
 import { act, fireEvent, render } from "@testing-library/react";
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import { createElement } from "react";
+import { describe, expect, it, vi } from "vitest";
 import { StreamdownContext } from "../index";
-import { components } from "../lib/components";
+import { components as importedComponents } from "../lib/components";
 import { ImageComponent } from "../lib/image";
+import type { Options } from "../lib/markdown";
 import { Markdown } from "../lib/markdown";
 import { parseMarkdownIntoBlocks } from "../lib/parse-blocks";
 import { PluginContext } from "../lib/plugin-context";
 
-const Section = components!.section!;
-const Ol = components!.ol!;
-const Code = components!.code!;
-const Tr = components!.tr!;
-const Th = components!.th!;
-const Td = components!.td!;
+const components = importedComponents as Required<
+  NonNullable<Options["components"]>
+>;
+const Section = components.section;
+const Ol = components.ol;
+const Code = components.code;
+const Tr = components.tr;
+const Th = components.th;
+const Td = components.td;
 
 describe("Footnote: non-whitespace text in li (line 585)", () => {
   it("should detect direct text content in footnote li", () => {
@@ -39,7 +43,7 @@ describe("Footnote: non-whitespace text in li (line 585)", () => {
     });
 
     const { container } = render(
-      <Section data-footnotes="" className="footnotes">
+      <Section className="footnotes" data-footnotes="">
         {[footnoteOl]}
       </Section>
     );
@@ -78,7 +82,7 @@ describe("Footnote: grandchild ReactElement not backref (lines 606-612)", () => 
     });
 
     const { container } = render(
-      <Section data-footnotes="" className="footnotes">
+      <Section className="footnotes" data-footnotes="">
         {[footnoteOl]}
       </Section>
     );
@@ -114,7 +118,7 @@ describe("Footnote: grandchild ReactElement not backref (lines 606-612)", () => 
     });
 
     const { container } = render(
-      <Section data-footnotes="" className="footnotes">
+      <Section className="footnotes" data-footnotes="">
         {[footnoteOl]}
       </Section>
     );
@@ -151,7 +155,7 @@ describe("Footnote: grandchild ReactElement not backref (lines 606-612)", () => 
     });
 
     const { container } = render(
-      <Section data-footnotes="" className="footnotes">
+      <Section className="footnotes" data-footnotes="">
         {[footnoteOl]}
       </Section>
     );
@@ -179,7 +183,7 @@ describe("CodeComponent ReactElement children extraction (line 729)", () => {
         }}
       >
         <PluginContext.Provider value={{}}>
-          <Code data-block="" className="language-javascript">
+          <Code className="language-javascript" data-block="">
             {codeElement}
           </Code>
         </PluginContext.Provider>
@@ -188,15 +192,13 @@ describe("CodeComponent ReactElement children extraction (line 729)", () => {
 
     // The code should be extracted and rendered in a code block
     expect(container).toBeTruthy();
-    const codeBlock = container.querySelector(
-      '[data-streamdown="code-block"]'
-    );
+    const codeBlock = container.querySelector('[data-streamdown="code-block"]');
     expect(codeBlock).toBeTruthy();
   });
 });
 
 describe("ImageComponent cached image useEffect (lines 36-38)", () => {
-  it("should detect already-loaded cached image on mount", async () => {
+  it("should detect already-loaded cached image on mount", () => {
     // We need to test the useEffect that checks img.complete and naturalWidth
     // Override HTMLImageElement prototype to simulate cached image
     const originalComplete = Object.getOwnPropertyDescriptor(
@@ -230,7 +232,7 @@ describe("ImageComponent cached image useEffect (lines 36-38)", () => {
           mode: "streaming",
         }}
       >
-        <ImageComponent src="https://example.com/cached.png" alt="cached" />
+        <ImageComponent alt="cached" src="https://example.com/cached.png" />
       </StreamdownContext.Provider>
     );
 
@@ -258,7 +260,7 @@ describe("ImageComponent cached image useEffect (lines 36-38)", () => {
     }
   });
 
-  it("should detect cached image with naturalWidth=0 as error", async () => {
+  it("should detect cached image with naturalWidth=0 as error", () => {
     const originalComplete = Object.getOwnPropertyDescriptor(
       HTMLImageElement.prototype,
       "complete"
@@ -290,7 +292,10 @@ describe("ImageComponent cached image useEffect (lines 36-38)", () => {
           mode: "streaming",
         }}
       >
-        <ImageComponent src="https://example.com/broken-cached.png" alt="broken" />
+        <ImageComponent
+          alt="broken"
+          src="https://example.com/broken-cached.png"
+        />
       </StreamdownContext.Provider>
     );
 
@@ -329,8 +334,7 @@ describe("parseMarkdownIntoBlocks void elements (line 58)", () => {
 
   it("should handle img void element in HTML block", () => {
     // <img> followed by content — img is void, should not push to htmlStack
-    const markdown =
-      '<img src="test.png">\n\nParagraph after image.';
+    const markdown = '<img src="test.png">\n\nParagraph after image.';
     const blocks = parseMarkdownIntoBlocks(markdown);
     expect(blocks.length).toBeGreaterThanOrEqual(1);
     expect(blocks.join("")).toContain("Paragraph after image");
@@ -374,15 +378,15 @@ describe("TableDownloadButton error catch (line 78)", () => {
               </tr>
             </tbody>
           </table>
-          <TableDownloadButton onError={onError} format="csv" />
+          <TableDownloadButton format="csv" onError={onError} />
         </div>
       </StreamdownContext.Provider>
     );
 
     const button = container.querySelector("button");
     expect(button).toBeTruthy();
-    await act(async () => {
-      fireEvent.click(button!);
+    await act(() => {
+      fireEvent.click(button as HTMLButtonElement);
     });
 
     expect(onError).toHaveBeenCalled();
@@ -503,7 +507,7 @@ describe("Footnote: null children handling (line 579)", () => {
     });
 
     const { container } = render(
-      <Section data-footnotes="" className="footnotes">
+      <Section className="footnotes" data-footnotes="">
         {[footnoteOl]}
       </Section>
     );

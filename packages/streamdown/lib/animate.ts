@@ -4,8 +4,8 @@ import { SKIP, visitParents } from "unist-util-visit-parents";
 
 export interface AnimatePlugin {
   name: "animate";
-  type: "animate";
   rehypePlugin: Pluggable;
+  type: "animate";
 }
 
 export interface AnimateOptions {
@@ -104,7 +104,9 @@ const processTextNode = (
 ): number | typeof SKIP | undefined => {
   const ancestor = ancestors.at(-1);
   /* v8 ignore next */
-  if (!(ancestor && "children" in ancestor)) return;
+  if (!(ancestor && "children" in ancestor)) {
+    return;
+  }
 
   if (hasSkipAncestor(ancestors)) {
     return SKIP;
@@ -113,7 +115,9 @@ const processTextNode = (
   const parent = ancestor as Parent;
   const index = parent.children.indexOf(node);
   /* v8 ignore next */
-  if (index === -1) return;
+  if (index === -1) {
+    return;
+  }
 
   const text = node.value;
   if (!text.trim()) {

@@ -159,7 +159,7 @@ describe("Code block loading behavior", () => {
     });
 
     // Manually trigger the highlighting
-    await act(async () => {
+    act(() => {
       resolveHighlight?.(highlightedResult);
     });
 

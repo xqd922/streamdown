@@ -46,6 +46,7 @@ describe("CodeBlockDownloadButton", () => {
     const button = container.querySelector(
       '[data-streamdown="code-block-download-button"]'
     );
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(button!);
 
     expect(save).toHaveBeenCalledWith(
@@ -75,6 +76,7 @@ describe("CodeBlockDownloadButton", () => {
     const button = container.querySelector(
       '[data-streamdown="code-block-download-button"]'
     );
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(button!);
 
     expect(save).toHaveBeenCalledWith("file.txt", "some code", "text/plain");
@@ -90,7 +92,11 @@ describe("CodeBlockDownloadButton", () => {
 
     const { container } = render(
       <CodeBlock code="test" language="text">
-        <CodeBlockDownloadButton code="test" language="text" onError={onError} />
+        <CodeBlockDownloadButton
+          code="test"
+          language="text"
+          onError={onError}
+        />
       </CodeBlock>
     );
 
@@ -104,6 +110,7 @@ describe("CodeBlockDownloadButton", () => {
     const button = container.querySelector(
       '[data-streamdown="code-block-download-button"]'
     );
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(button!);
 
     expect(onError).toHaveBeenCalledWith(expect.any(Error));

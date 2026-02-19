@@ -19,8 +19,7 @@ export const CopyButton = ({ code }: { code: string }) => {
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Unknown error";
+      const message = error instanceof Error ? error.message : "Unknown error";
       toast.error(message);
     }
   }, [code]);

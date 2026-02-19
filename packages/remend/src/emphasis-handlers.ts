@@ -204,7 +204,6 @@ export const countTripleAsterisks = (text: string): number => {
   let consecutiveAsterisks = 0;
   let inCodeBlock = false;
 
-  // biome-ignore lint/style/useForOf: "Need index access to check character codes for performance"
   for (let i = 0; i < text.length; i += 1) {
     // Track fenced code blocks (```)
     if (
@@ -406,8 +405,7 @@ export const handleIncompleteDoubleUnderscoreItalic = (
     if (halfCompleteMatch) {
       const markerIndex = text.lastIndexOf(halfCompleteMatch[1]);
       if (!isWithinCodeBlock(text, markerIndex)) {
-        const underscorePairs =
-          countDoubleUnderscoresOutsideCodeBlocks(text);
+        const underscorePairs = countDoubleUnderscoresOutsideCodeBlocks(text);
         if (underscorePairs % 2 === 1) {
           return `${text}_`;
         }
@@ -437,6 +435,7 @@ export const handleIncompleteDoubleUnderscoreItalic = (
 };
 
 // Helper function to find the first single asterisk index (skips fenced code blocks)
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: asterisk detection requires many inline conditions
 const findFirstSingleAsteriskIndex = (text: string): number => {
   let inCodeBlock = false;
 
@@ -600,8 +599,9 @@ const handleTrailingAsterisksForUnderscore = (text: string): string | null => {
   }
 
   const textWithoutTrailingAsterisks = text.slice(0, -2);
-  const asteriskPairsAfterRemoval =
-    countDoubleAsterisksOutsideCodeBlocks(textWithoutTrailingAsterisks);
+  const asteriskPairsAfterRemoval = countDoubleAsterisksOutsideCodeBlocks(
+    textWithoutTrailingAsterisks
+  );
 
   // If removing trailing ** makes the count odd, it was added to close an unclosed **
   if (asteriskPairsAfterRemoval % 2 !== 1) {

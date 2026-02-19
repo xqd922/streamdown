@@ -10,9 +10,9 @@ interface MermaidDownloadDropdownProps {
   chart: string;
   children?: React.ReactNode;
   className?: string;
+  config?: MermaidConfig;
   onDownload?: (format: "mmd" | "png" | "svg") => void;
   onError?: (error: Error) => void;
-  config?: MermaidConfig;
 }
 
 export const MermaidDownloadDropdown = ({

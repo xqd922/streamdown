@@ -5,7 +5,7 @@ import { Lexer } from "marked";
 // Previously used [^\]\s] which incorrectly matched regex character classes like [^\s...]
 const footnoteReferencePattern = /\[\^[\w-]{1,200}\](?!:)/;
 const footnoteDefinitionPattern = /\[\^[\w-]{1,200}\]:/;
-const closingTagPattern = /<\/(\w+)>/;
+const _closingTagPattern = /<\/(\w+)>/;
 const openingTagPattern = /<(\w+)[\s>]/;
 
 // HTML void elements (self-closing tags) that don't need closing tags
@@ -53,7 +53,10 @@ const getCloseTagPattern = (tagName: string): RegExp => {
 };
 
 // Count non-self-closing open tags in a block
-const countNonSelfClosingOpenTags = (block: string, tagName: string): number => {
+const countNonSelfClosingOpenTags = (
+  block: string,
+  tagName: string
+): number => {
   if (voidElements.has(tagName.toLowerCase())) {
     return 0;
   }

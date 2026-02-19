@@ -22,7 +22,7 @@ export const handleIncompleteStrikethrough = (text: string): string => {
     }
 
     // doubleTildeGlobalPattern always matches when strikethroughPattern matched
-    const tildePairs = text.match(doubleTildeGlobalPattern)!.length;
+    const tildePairs = text.match(doubleTildeGlobalPattern)?.length;
     if (tildePairs % 2 === 1) {
       return `${text}~~`;
     }
@@ -32,7 +32,7 @@ export const handleIncompleteStrikethrough = (text: string): string => {
     const halfCompleteMatch = text.match(halfCompleteTildePattern);
     if (halfCompleteMatch) {
       // doubleTildeGlobalPattern always matches when halfCompleteTildePattern matched
-      const tildePairs = text.match(doubleTildeGlobalPattern)!.length;
+      const tildePairs = text.match(doubleTildeGlobalPattern)?.length;
       if (tildePairs % 2 === 1) {
         return `${text}~`;
       }

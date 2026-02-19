@@ -14,7 +14,9 @@ vi.mock("../lib/utils", async () => {
 });
 
 vi.mock("../lib/mermaid/utils", () => ({
-  svgToPngBlob: vi.fn().mockResolvedValue(new Blob(["png"], { type: "image/png" })),
+  svgToPngBlob: vi
+    .fn()
+    .mockResolvedValue(new Blob(["png"], { type: "image/png" })),
 }));
 
 describe("MermaidDownloadDropdown", () => {
@@ -67,9 +69,11 @@ describe("MermaidDownloadDropdown", () => {
     const button = container.querySelector("button");
     expect(button).toBeTruthy();
 
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(button!);
     expect(container.querySelector(".absolute")).toBeTruthy();
 
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(button!);
     expect(container.querySelector(".absolute")).toBeFalsy();
   });
@@ -83,6 +87,7 @@ describe("MermaidDownloadDropdown", () => {
     });
 
     // Open dropdown
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(container.querySelector("button")!);
 
     // Click MMD option
@@ -90,6 +95,7 @@ describe("MermaidDownloadDropdown", () => {
       (btn) => btn.textContent === "MMD"
     );
     expect(mmdButton).toBeTruthy();
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(mmdButton!);
 
     await waitFor(() => {
@@ -112,12 +118,14 @@ describe("MermaidDownloadDropdown", () => {
     );
 
     // Open dropdown
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(container.querySelector("button")!);
 
     // Click SVG option
     const svgButton = Array.from(container.querySelectorAll("button")).find(
       (btn) => btn.textContent === "SVG"
     );
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(svgButton!);
 
     await waitFor(() => {
@@ -141,12 +149,14 @@ describe("MermaidDownloadDropdown", () => {
     );
 
     // Open dropdown
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(container.querySelector("button")!);
 
     // Click PNG option
     const pngButton = Array.from(container.querySelectorAll("button")).find(
       (btn) => btn.textContent === "PNG"
     );
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(pngButton!);
 
     await waitFor(() => {
@@ -170,16 +180,20 @@ describe("MermaidDownloadDropdown", () => {
       plugin
     );
 
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(container.querySelector("button")!);
 
     const svgButton = Array.from(container.querySelectorAll("button")).find(
       (btn) => btn.textContent === "SVG"
     );
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(svgButton!);
 
     await waitFor(() => {
       expect(onError).toHaveBeenCalledWith(
-        expect.objectContaining({ message: expect.stringContaining("SVG not found") })
+        expect.objectContaining({
+          message: expect.stringContaining("SVG not found"),
+        })
       );
     });
   });
@@ -202,11 +216,13 @@ describe("MermaidDownloadDropdown", () => {
       plugin
     );
 
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(container.querySelector("button")!);
 
     const svgButton = Array.from(container.querySelectorAll("button")).find(
       (btn) => btn.textContent === "SVG"
     );
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(svgButton!);
 
     await waitFor(() => {
@@ -219,19 +235,18 @@ describe("MermaidDownloadDropdown", () => {
     const { container } = render(
       <PluginContext.Provider value={{}}>
         <StreamdownContext.Provider value={defaultContext}>
-          <MermaidDownloadDropdown
-            chart="graph TD; A-->B"
-            onError={onError}
-          />
+          <MermaidDownloadDropdown chart="graph TD; A-->B" onError={onError} />
         </StreamdownContext.Provider>
       </PluginContext.Provider>
     );
 
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(container.querySelector("button")!);
 
     const svgButton = Array.from(container.querySelectorAll("button")).find(
       (btn) => btn.textContent === "SVG"
     );
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(svgButton!);
 
     await waitFor(() => {
@@ -247,14 +262,13 @@ describe("MermaidDownloadDropdown", () => {
     const { container } = renderWithContext({ chart: "graph TD; A-->B" });
 
     // Open dropdown
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(container.querySelector("button")!);
     expect(container.querySelector(".absolute")).toBeTruthy();
 
     // Click outside
     act(() => {
-      document.dispatchEvent(
-        new MouseEvent("mousedown", { bubbles: true })
-      );
+      document.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
     });
 
     await waitFor(() => {

@@ -19,10 +19,10 @@ const unlockBodyScroll = () => {
 };
 
 interface LinkSafetyModalProps {
-  url: string;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  url: string;
 }
 
 export const LinkSafetyModal = ({

@@ -1,6 +1,6 @@
+import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { Markdown } from "../lib/markdown";
-import { render } from "@testing-library/react";
 
 describe("remarkEscapeHtml", () => {
   it("should escape HTML when rehypeRaw is not in plugins", () => {

@@ -41,18 +41,16 @@ export const hasIncompleteCodeFence = (markdown: string): boolean => {
         openFenceChar = fenceRun[0];
         openFenceLength = fenceRun.length;
       }
-    } else {
+    } else if (match) {
       // Inside a fence — look for a closing fence with the same char and >= length
-      if (match) {
-        const fenceRun = match[1];
-        const char = fenceRun[0];
-        const length = fenceRun.length;
+      const fenceRun = match[1];
+      const char = fenceRun[0];
+      const length = fenceRun.length;
 
-        if (char === openFenceChar && length >= openFenceLength) {
-          // Valid closing fence
-          openFenceChar = null;
-          openFenceLength = 0;
-        }
+      if (char === openFenceChar && length >= openFenceLength) {
+        // Valid closing fence
+        openFenceChar = null;
+        openFenceLength = 0;
       }
     }
   }

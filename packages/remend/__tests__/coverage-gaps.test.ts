@@ -82,7 +82,9 @@ describe("strikethrough even tilde pairs", () => {
 
 describe("double underscore counting with code blocks", () => {
   it("should skip __ inside fenced code blocks", () => {
-    expect(remend("```\n__code\n```\n__text")).toBe("```\n__code\n```\n__text__");
+    expect(remend("```\n__code\n```\n__text")).toBe(
+      "```\n__code\n```\n__text__"
+    );
   });
 });
 
@@ -106,7 +108,6 @@ describe("link handler edge cases", () => {
       "[text] incomplete"
     );
   });
-
 });
 
 describe("isBeforeClosingParen edge cases", () => {
@@ -203,9 +204,9 @@ describe("double underscore half-complete with even pairs", () => {
 
 describe("findFirstIncompleteBracket with incomplete URL", () => {
   it("should handle [text]( without ) before incomplete bracket", () => {
-    expect(
-      remend("[a]( b](c [incomplete", { linkMode: "text-only" })
-    ).toBe("[a]( b](c incomplete");
+    expect(remend("[a]( b](c [incomplete", { linkMode: "text-only" })).toBe(
+      "[a]( b](c incomplete"
+    );
   });
 });
 

@@ -89,6 +89,7 @@ export const CodeBlockBody = memo(
                 // biome-ignore lint/suspicious/noArrayIndexKey: "This is a stable key."
                 key={index}
               >
+                {/* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: dual-theme token style mapping */}
                 {row.map((token, tokenIndex) => {
                   // Shiki dual-theme tokens put direct CSS properties (color,
                   // background-color) into htmlStyle alongside CSS custom

@@ -29,9 +29,7 @@ describe("preprocessCustomTags", () => {
   it("should handle tags with attributes", () => {
     const md = '<custom class="test" id="x">A\n\nB</custom>';
     const result = preprocessCustomTags(md, ["custom"]);
-    expect(result).toBe(
-      '<custom class="test" id="x">A\n<!---->\nB</custom>'
-    );
+    expect(result).toBe('<custom class="test" id="x">A\n<!---->\nB</custom>');
   });
 
   it("should be case insensitive", () => {

@@ -22,7 +22,7 @@ const TestComponent = ({
   });
 
   return (
-    <div ref={containerRef} data-testid="container">
+    <div data-testid="container" ref={containerRef}>
       {shouldRender ? (
         <span data-testid="rendered">Rendered</span>
       ) : (
@@ -33,7 +33,7 @@ const TestComponent = ({
 };
 
 // Store observer instances for manipulation
-let observerInstances: Array<any> = [];
+let observerInstances: any[] = [];
 
 describe("useDeferredRender", () => {
   let originalIntersectionObserver: typeof IntersectionObserver;
@@ -65,7 +65,10 @@ describe("useDeferredRender", () => {
 
     // Ensure requestIdleCallback and cancelIdleCallback are available
     if (!window.requestIdleCallback) {
-      (window as any).requestIdleCallback = (cb: IdleRequestCallback, _opts?: IdleRequestOptions) => {
+      (window as any).requestIdleCallback = (
+        cb: IdleRequestCallback,
+        _opts?: IdleRequestOptions
+      ) => {
         return window.setTimeout(() => {
           cb({ didTimeout: false, timeRemaining: () => 30 });
         }, 0);
@@ -96,7 +99,7 @@ describe("useDeferredRender", () => {
 
   it("should render when element intersects viewport", async () => {
     const { getByTestId } = render(
-      <TestComponent immediate={false} debounceDelay={100} idleTimeout={200} />
+      <TestComponent debounceDelay={100} idleTimeout={200} immediate={false} />
     );
 
     expect(getByTestId("placeholder")).toBeTruthy();
@@ -105,7 +108,7 @@ describe("useDeferredRender", () => {
     expect(observer).toBeTruthy();
 
     // Simulate intersection
-    await act(async () => {
+    await act(() => {
       observer.callback(
         [
           {
@@ -118,12 +121,12 @@ describe("useDeferredRender", () => {
     });
 
     // Advance past debounce delay
-    await act(async () => {
+    await act(() => {
       vi.advanceTimersByTime(150);
     });
 
     // Advance past idle callback
-    await act(async () => {
+    await act(() => {
       vi.advanceTimersByTime(50);
     });
 
@@ -132,13 +135,13 @@ describe("useDeferredRender", () => {
 
   it("should clear pending renders when element leaves viewport", async () => {
     const { getByTestId } = render(
-      <TestComponent immediate={false} debounceDelay={100} />
+      <TestComponent debounceDelay={100} immediate={false} />
     );
 
     const observer = observerInstances[0];
 
     // Intersect
-    await act(async () => {
+    await act(() => {
       observer.callback(
         [
           {
@@ -151,7 +154,7 @@ describe("useDeferredRender", () => {
     });
 
     // Before debounce completes, leave viewport (line 187: clearPendingRenders in non-intersecting branch)
-    await act(async () => {
+    await act(() => {
       observer.callback(
         [
           {
@@ -164,7 +167,7 @@ describe("useDeferredRender", () => {
     });
 
     // Advance past debounce - should NOT render since we left viewport
-    await act(async () => {
+    await act(() => {
       vi.advanceTimersByTime(500);
     });
 
@@ -173,13 +176,13 @@ describe("useDeferredRender", () => {
 
   it("should handle re-entry into viewport with idle callback having pending", async () => {
     const { getByTestId } = render(
-      <TestComponent immediate={false} debounceDelay={50} idleTimeout={100} />
+      <TestComponent debounceDelay={50} idleTimeout={100} immediate={false} />
     );
 
     const observer = observerInstances[0];
 
     // First intersection
-    await act(async () => {
+    await act(() => {
       observer.callback(
         [
           {
@@ -192,12 +195,12 @@ describe("useDeferredRender", () => {
     });
 
     // Advance past debounce
-    await act(async () => {
+    await act(() => {
       vi.advanceTimersByTime(60);
     });
 
     // Second intersection triggers clearPendingRenders with idle callback set (line 136)
-    await act(async () => {
+    await act(() => {
       observer.callback(
         [
           {
@@ -210,7 +213,7 @@ describe("useDeferredRender", () => {
     });
 
     // Advance everything
-    await act(async () => {
+    await act(() => {
       vi.advanceTimersByTime(500);
     });
 
@@ -219,13 +222,13 @@ describe("useDeferredRender", () => {
 
   it("should handle takeRecords returning non-intersecting entry", async () => {
     const { getByTestId } = render(
-      <TestComponent immediate={false} debounceDelay={50} />
+      <TestComponent debounceDelay={50} immediate={false} />
     );
 
     const observer = observerInstances[0];
 
     // Simulate intersection
-    await act(async () => {
+    await act(() => {
       observer.callback(
         [
           {
@@ -243,7 +246,7 @@ describe("useDeferredRender", () => {
     ]);
 
     // Advance past debounce - takeRecords says no longer intersecting
-    await act(async () => {
+    await act(() => {
       vi.advanceTimersByTime(200);
     });
 
@@ -253,13 +256,13 @@ describe("useDeferredRender", () => {
 
   it("should clean up on unmount", async () => {
     const { getByTestId, unmount } = render(
-      <TestComponent immediate={false} debounceDelay={50} />
+      <TestComponent debounceDelay={50} immediate={false} />
     );
 
     const observer = observerInstances[0];
 
     // Trigger intersection to set up timeouts
-    await act(async () => {
+    await act(() => {
       observer.callback(
         [
           {
@@ -272,7 +275,7 @@ describe("useDeferredRender", () => {
     });
 
     // Advance past debounce to set up idle callback
-    await act(async () => {
+    await act(() => {
       vi.advanceTimersByTime(60);
     });
 
@@ -285,19 +288,22 @@ describe("useDeferredRender", () => {
   it("should handle idle callback with didTimeout=true", async () => {
     // Override the real requestIdleCallback to simulate didTimeout
     const origRIC = window.requestIdleCallback;
-    (window as any).requestIdleCallback = (cb: IdleRequestCallback, _opts?: IdleRequestOptions) => {
+    (window as any).requestIdleCallback = (
+      cb: IdleRequestCallback,
+      _opts?: IdleRequestOptions
+    ) => {
       return window.setTimeout(() => {
         cb({ didTimeout: true, timeRemaining: () => 0 });
       }, 0);
     };
 
     const { getByTestId } = render(
-      <TestComponent immediate={false} debounceDelay={50} idleTimeout={200} />
+      <TestComponent debounceDelay={50} idleTimeout={200} immediate={false} />
     );
 
     const observer = observerInstances[0];
 
-    await act(async () => {
+    await act(() => {
       observer.callback(
         [
           {
@@ -310,7 +316,7 @@ describe("useDeferredRender", () => {
     });
 
     // Advance past debounce and idle
-    await act(async () => {
+    await act(() => {
       vi.advanceTimersByTime(500);
     });
 
@@ -321,13 +327,13 @@ describe("useDeferredRender", () => {
   it("should clean up idleCallbackRef on effect re-run (lines 124-126)", async () => {
     // When the effect re-runs (due to dependency change), it should clear any pending idle callback
     const { getByTestId, rerender } = render(
-      <TestComponent immediate={false} debounceDelay={50} idleTimeout={200} />
+      <TestComponent debounceDelay={50} idleTimeout={200} immediate={false} />
     );
 
     const observer = observerInstances[0];
 
     // Trigger intersection to start the process
-    await act(async () => {
+    await act(() => {
       observer.callback(
         [
           {
@@ -340,21 +346,21 @@ describe("useDeferredRender", () => {
     });
 
     // Advance past debounce so idle callback gets scheduled (idleCallbackRef.current is set)
-    await act(async () => {
+    await act(() => {
       vi.advanceTimersByTime(60);
     });
 
     // Now re-render with different debounceDelay to trigger the effect cleanup and re-run
     // This should hit lines 124-126 (clearing idleCallbackRef.current on re-run)
     rerender(
-      <TestComponent immediate={false} debounceDelay={100} idleTimeout={200} />
+      <TestComponent debounceDelay={100} idleTimeout={200} immediate={false} />
     );
 
     // The new effect should have cleared the old idle callback
     // Now trigger intersection again with the new observer
     const newObserver = observerInstances.at(-1);
     if (newObserver) {
-      await act(async () => {
+      await act(() => {
         newObserver.callback(
           [
             {
@@ -368,7 +374,7 @@ describe("useDeferredRender", () => {
     }
 
     // Advance past everything
-    await act(async () => {
+    await act(() => {
       vi.advanceTimersByTime(500);
     });
 
@@ -379,7 +385,10 @@ describe("useDeferredRender", () => {
     let callCount = 0;
     // First call: timeRemaining=0, didTimeout=false (triggers re-schedule)
     // Second call: timeRemaining>0 (triggers render)
-    (window as any).requestIdleCallback = (cb: IdleRequestCallback, _opts?: IdleRequestOptions) => {
+    (window as any).requestIdleCallback = (
+      cb: IdleRequestCallback,
+      _opts?: IdleRequestOptions
+    ) => {
       callCount++;
       const currentCall = callCount;
       return window.setTimeout(() => {
@@ -394,12 +403,12 @@ describe("useDeferredRender", () => {
     };
 
     const { getByTestId } = render(
-      <TestComponent immediate={false} debounceDelay={50} idleTimeout={200} />
+      <TestComponent debounceDelay={50} idleTimeout={200} immediate={false} />
     );
 
     const observer = observerInstances[0];
 
-    await act(async () => {
+    await act(() => {
       observer.callback(
         [
           {
@@ -412,17 +421,17 @@ describe("useDeferredRender", () => {
     });
 
     // Advance past debounce
-    await act(async () => {
+    await act(() => {
       vi.advanceTimersByTime(60);
     });
 
     // First idle callback fires (timeRemaining=0, !didTimeout) -> re-schedules (lines 149-152)
-    await act(async () => {
+    await act(() => {
       vi.advanceTimersByTime(10);
     });
 
     // Second idle callback fires (timeRemaining>0) -> renders
-    await act(async () => {
+    await act(() => {
       vi.advanceTimersByTime(10);
     });
 

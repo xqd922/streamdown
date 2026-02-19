@@ -1,8 +1,7 @@
-import { act, fireEvent, render, waitFor } from "@testing-library/react";
+import { fireEvent, render, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { StreamdownContext } from "../index";
 import { PluginContext } from "../lib/plugin-context";
-import type { DiagramPlugin } from "../lib/plugin-types";
 
 // Must mock the Mermaid component that fullscreen-button imports
 vi.mock("../lib/mermaid", () => ({
@@ -55,6 +54,7 @@ describe("MermaidFullscreenButton", () => {
     });
 
     const button = container.querySelector('button[title="View fullscreen"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(button!);
 
     await waitFor(() => {
@@ -70,6 +70,7 @@ describe("MermaidFullscreenButton", () => {
     const { container } = renderWithContext({ chart: "graph TD; A-->B" });
 
     const button = container.querySelector('button[title="View fullscreen"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(button!);
 
     expect(document.body.style.overflow).toBe("hidden");
@@ -83,6 +84,7 @@ describe("MermaidFullscreenButton", () => {
     });
 
     const button = container.querySelector('button[title="View fullscreen"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(button!);
 
     await waitFor(() => {
@@ -102,9 +104,9 @@ describe("MermaidFullscreenButton", () => {
   it("should close fullscreen on backdrop click", async () => {
     const { container } = renderWithContext({ chart: "graph TD; A-->B" });
 
-    fireEvent.click(
-      container.querySelector('button[title="View fullscreen"]')!
-    );
+    const openBtn = container.querySelector('button[title="View fullscreen"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
+    fireEvent.click(openBtn!);
 
     await waitFor(() => {
       expect(document.querySelector(".fixed.inset-0")).toBeTruthy();
@@ -112,6 +114,7 @@ describe("MermaidFullscreenButton", () => {
 
     // Click the backdrop
     const backdrop = document.querySelector(".fixed.inset-0");
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(backdrop!);
 
     await waitFor(() => {
@@ -122,9 +125,9 @@ describe("MermaidFullscreenButton", () => {
   it("should close fullscreen on X button click", async () => {
     const { container } = renderWithContext({ chart: "graph TD; A-->B" });
 
-    fireEvent.click(
-      container.querySelector('button[title="View fullscreen"]')!
-    );
+    const openBtn = container.querySelector('button[title="View fullscreen"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
+    fireEvent.click(openBtn!);
 
     await waitFor(() => {
       const exitButton = document.querySelector(
@@ -136,6 +139,7 @@ describe("MermaidFullscreenButton", () => {
     const exitButton = document.querySelector(
       'button[title="Exit fullscreen"]'
     );
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(exitButton!);
 
     await waitFor(() => {
@@ -146,9 +150,9 @@ describe("MermaidFullscreenButton", () => {
   it("should handle Escape key on backdrop element", async () => {
     const { container } = renderWithContext({ chart: "graph TD; A-->B" });
 
-    fireEvent.click(
-      container.querySelector('button[title="View fullscreen"]')!
-    );
+    const openBtn = container.querySelector('button[title="View fullscreen"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
+    fireEvent.click(openBtn!);
 
     await waitFor(() => {
       expect(document.querySelector(".fixed.inset-0")).toBeTruthy();
@@ -156,6 +160,7 @@ describe("MermaidFullscreenButton", () => {
 
     // Press Escape on the backdrop div directly
     const backdrop = document.querySelector(".fixed.inset-0");
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.keyDown(backdrop!, { key: "Escape" });
 
     await waitFor(() => {
@@ -166,9 +171,9 @@ describe("MermaidFullscreenButton", () => {
   it("should stop event propagation on content area click", async () => {
     const { container } = renderWithContext({ chart: "graph TD; A-->B" });
 
-    fireEvent.click(
-      container.querySelector('button[title="View fullscreen"]')!
-    );
+    const openBtn = container.querySelector('button[title="View fullscreen"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
+    fireEvent.click(openBtn!);
 
     await waitFor(() => {
       expect(document.querySelector(".fixed.inset-0")).toBeTruthy();
@@ -176,6 +181,7 @@ describe("MermaidFullscreenButton", () => {
 
     // Click on content (role=presentation) - should not close
     const contentArea = document.querySelector('[role="presentation"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(contentArea!);
 
     // Should still be open
@@ -185,9 +191,9 @@ describe("MermaidFullscreenButton", () => {
   it("should stop keydown propagation on content area", async () => {
     const { container } = renderWithContext({ chart: "graph TD; A-->B" });
 
-    fireEvent.click(
-      container.querySelector('button[title="View fullscreen"]')!
-    );
+    const openBtn = container.querySelector('button[title="View fullscreen"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
+    fireEvent.click(openBtn!);
 
     await waitFor(() => {
       expect(document.querySelector(".fixed.inset-0")).toBeTruthy();
@@ -195,6 +201,7 @@ describe("MermaidFullscreenButton", () => {
 
     // Press Escape on content area - should not close
     const contentArea = document.querySelector('[role="presentation"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.keyDown(contentArea!, { key: "Escape" });
 
     // Should still be open
@@ -204,9 +211,9 @@ describe("MermaidFullscreenButton", () => {
   it("should unlock body scroll when fullscreen closes", async () => {
     const { container } = renderWithContext({ chart: "graph TD; A-->B" });
 
-    fireEvent.click(
-      container.querySelector('button[title="View fullscreen"]')!
-    );
+    const openBtn = container.querySelector('button[title="View fullscreen"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
+    fireEvent.click(openBtn!);
     expect(document.body.style.overflow).toBe("hidden");
 
     fireEvent.keyDown(document, { key: "Escape" });
@@ -229,9 +236,9 @@ describe("MermaidFullscreenButton", () => {
   it("should render Mermaid component in fullscreen portal", async () => {
     const { container } = renderWithContext({ chart: "graph TD; A-->B" });
 
-    fireEvent.click(
-      container.querySelector('button[title="View fullscreen"]')!
-    );
+    const openBtn = container.querySelector('button[title="View fullscreen"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
+    fireEvent.click(openBtn!);
 
     await waitFor(() => {
       const mermaid = document.querySelector('[data-testid="mermaid"]');

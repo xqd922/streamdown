@@ -11,10 +11,10 @@ import {
 export interface TableDownloadButtonProps {
   children?: React.ReactNode;
   className?: string;
+  filename?: string;
+  format?: "csv" | "markdown";
   onDownload?: () => void;
   onError?: (error: Error) => void;
-  format?: "csv" | "markdown";
-  filename?: string;
 }
 
 export const TableDownloadButton = ({

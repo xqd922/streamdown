@@ -2,6 +2,8 @@ import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { normalizeHtmlIndentation, Streamdown } from "../index";
 
+const INDENTED_HTML_TAG_REGEX = /\n {4,}<\w/;
+
 describe("normalizeHtmlIndentation utility function", () => {
   it("should return empty string unchanged", () => {
     expect(normalizeHtmlIndentation("")).toBe("");
@@ -45,7 +47,7 @@ describe("normalizeHtmlIndentation utility function", () => {
     const result = normalizeHtmlIndentation(input);
 
     // All HTML tags should not have 4+ spaces before them
-    expect(result).not.toMatch(/\n {4,}<\w/);
+    expect(result).not.toMatch(INDENTED_HTML_TAG_REGEX);
     // Content should still be preserved
     expect(result).toContain("Title");
     expect(result).toContain("Another Title");
@@ -237,8 +239,8 @@ Another paragraph.`;
 
     const { container } = render(
       <Streamdown
-        normalizeHtmlIndentation
         allowedTags={{ article: [], header: [], footer: [] }}
+        normalizeHtmlIndentation
       >
         {content}
       </Streamdown>
@@ -295,4 +297,3 @@ describe("parse-blocks HTML merging", () => {
     );
   });
 });
-

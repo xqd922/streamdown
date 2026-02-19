@@ -21,15 +21,12 @@ import type { Pluggable } from "unified";
 import { type AnimateOptions, createAnimatePlugin } from "./lib/animate";
 import { BlockIncompleteContext } from "./lib/block-incomplete-context";
 import { components as defaultComponents } from "./lib/components";
-import {
-  hasIncompleteCodeFence,
-  hasTable,
-} from "./lib/incomplete-code-utils";
+import { hasIncompleteCodeFence, hasTable } from "./lib/incomplete-code-utils";
 import { Markdown, type Options } from "./lib/markdown";
 import { parseMarkdownIntoBlocks } from "./lib/parse-blocks";
-import { preprocessCustomTags } from "./lib/preprocess-custom-tags";
 import { PluginContext } from "./lib/plugin-context";
 import type { PluginConfig } from "./lib/plugin-types";
+import { preprocessCustomTags } from "./lib/preprocess-custom-tags";
 import { cn } from "./lib/utils";
 
 export type { BundledLanguage, BundledTheme } from "shiki";
@@ -98,10 +95,10 @@ export type ControlsConfig =
     };
 
 export interface LinkSafetyModalProps {
-  url: string;
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  url: string;
 }
 
 export interface LinkSafetyConfig {
@@ -111,8 +108,8 @@ export interface LinkSafetyConfig {
 }
 
 export interface MermaidErrorComponentProps {
-  error: string;
   chart: string;
+  error: string;
   retry: () => void;
 }
 
@@ -182,12 +179,12 @@ const carets = {
 
 // Combined context for better performance - reduces React tree depth from 5 nested providers to 1
 export interface StreamdownContextType {
-  shikiTheme: [BundledTheme, BundledTheme];
   controls: ControlsConfig;
   isAnimating: boolean;
-  mode: "static" | "streaming";
-  mermaid?: MermaidOptions;
   linkSafety?: LinkSafetyConfig;
+  mermaid?: MermaidOptions;
+  mode: "static" | "streaming";
+  shikiTheme: [BundledTheme, BundledTheme];
 }
 
 const defaultStreamdownContext: StreamdownContextType = {
@@ -489,7 +486,7 @@ export const Streamdown = memo(
       if (!isAnimating || blocksToRender.length === 0) {
         return false;
       }
-      const lastBlock = blocksToRender[blocksToRender.length - 1];
+      const lastBlock = blocksToRender.at(-1);
       return hasIncompleteCodeFence(lastBlock) || hasTable(lastBlock);
     }, [isAnimating, blocksToRender]);
 
@@ -556,7 +553,9 @@ export const Streamdown = memo(
                   key={blockKeys[index]}
                   rehypePlugins={mergedRehypePlugins}
                   remarkPlugins={mergedRemarkPlugins}
-                  shouldNormalizeHtmlIndentation={shouldNormalizeHtmlIndentation}
+                  shouldNormalizeHtmlIndentation={
+                    shouldNormalizeHtmlIndentation
+                  }
                   shouldParseIncompleteMarkdown={shouldParseIncompleteMarkdown}
                   {...props}
                 />

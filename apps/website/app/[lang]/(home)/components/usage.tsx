@@ -88,48 +88,50 @@ export const Usage = async () => {
       >
         <code className="grid min-w-max">
           {tokens.map((line, lineIndex) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: static token array from shiki
             <span className="line px-4" key={lineIndex}>
-              {line.length > 0 ? (
-                line.map((token, tokenIndex) => {
-                  const tokenStyle: Record<string, string> = {};
+              {line.length > 0
+                ? // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: dual-theme token style mapping
+                  line.map((token, tokenIndex) => {
+                    const tokenStyle: Record<string, string> = {};
 
-                  if (token.htmlStyle) {
-                    for (const [key, value] of Object.entries(
-                      token.htmlStyle
-                    )) {
-                      if (key === "color" || key === "--shiki-light") {
-                        tokenStyle["--sdm-c"] = value;
-                      } else if (
-                        key === "background-color" ||
-                        key === "--shiki-light-bg"
-                      ) {
-                        tokenStyle["--sdm-tbg"] = value;
-                      } else {
-                        tokenStyle[key] = value;
+                    if (token.htmlStyle) {
+                      for (const [key, value] of Object.entries(
+                        token.htmlStyle
+                      )) {
+                        if (key === "color" || key === "--shiki-light") {
+                          tokenStyle["--sdm-c"] = value;
+                        } else if (
+                          key === "background-color" ||
+                          key === "--shiki-light-bg"
+                        ) {
+                          tokenStyle["--sdm-tbg"] = value;
+                        } else {
+                          tokenStyle[key] = value;
+                        }
                       }
                     }
-                  }
 
-                  const hasBg = Boolean(tokenStyle["--sdm-tbg"]);
+                    const hasBg = Boolean(tokenStyle["--sdm-tbg"]);
 
-                  return (
-                    <span
-                      className={cn(
-                        "text-[var(--sdm-c,inherit)]",
-                        "dark:text-[var(--shiki-dark,var(--sdm-c,inherit))]",
-                        hasBg && "bg-[var(--sdm-tbg)]",
-                        hasBg && "dark:bg-[var(--shiki-dark-bg,var(--sdm-tbg))]"
-                      )}
-                      key={tokenIndex}
-                      style={tokenStyle as CSSProperties}
-                    >
-                      {token.content}
-                    </span>
-                  );
-                })
-              ) : (
-                <>{"\n"}</>
-              )}
+                    return (
+                      <span
+                        className={cn(
+                          "text-[var(--sdm-c,inherit)]",
+                          "dark:text-[var(--shiki-dark,var(--sdm-c,inherit))]",
+                          hasBg && "bg-[var(--sdm-tbg)]",
+                          hasBg &&
+                            "dark:bg-[var(--shiki-dark-bg,var(--sdm-tbg))]"
+                        )}
+                        // biome-ignore lint/suspicious/noArrayIndexKey: static token array from shiki
+                        key={tokenIndex}
+                        style={tokenStyle as CSSProperties}
+                      >
+                        {token.content}
+                      </span>
+                    );
+                  })
+                : "\n"}
             </span>
           ))}
         </code>

@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { svgToPngBlob } from "../lib/mermaid/utils";
 
+const BASE64_SVG_DATA_URL_REGEX = /^data:image\/svg\+xml;base64,/;
+
 describe("svgToPngBlob", () => {
   let mockCanvas: any;
   let mockCtx: any;
@@ -37,9 +39,7 @@ describe("svgToPngBlob", () => {
     };
 
     originalImage = globalThis.Image;
-    globalThis.Image = function () {
-      return mockImage;
-    } as any;
+    globalThis.Image = (() => mockImage) as any;
   });
 
   afterEach(() => {
@@ -51,11 +51,9 @@ describe("svgToPngBlob", () => {
     const svgString = '<svg width="100" height="50"><text>Test</text></svg>';
     const mockBlob = new Blob(["png data"], { type: "image/png" });
 
-    mockCanvas.toBlob.mockImplementation(
-      (cb: (blob: Blob | null) => void) => {
-        cb(mockBlob);
-      }
-    );
+    mockCanvas.toBlob.mockImplementation((cb: (blob: Blob | null) => void) => {
+      cb(mockBlob);
+    });
 
     const promise = svgToPngBlob(svgString);
 
@@ -73,11 +71,9 @@ describe("svgToPngBlob", () => {
     const svgString = '<svg width="100" height="50"><text>Test</text></svg>';
     const mockBlob = new Blob(["png data"], { type: "image/png" });
 
-    mockCanvas.toBlob.mockImplementation(
-      (cb: (blob: Blob | null) => void) => {
-        cb(mockBlob);
-      }
-    );
+    mockCanvas.toBlob.mockImplementation((cb: (blob: Blob | null) => void) => {
+      cb(mockBlob);
+    });
 
     const promise = svgToPngBlob(svgString, { scale: 2 });
 
@@ -103,11 +99,9 @@ describe("svgToPngBlob", () => {
 
   it("should reject when toBlob returns null", async () => {
     const svgString = "<svg><text>Test</text></svg>";
-    mockCanvas.toBlob.mockImplementation(
-      (cb: (blob: Blob | null) => void) => {
-        cb(null);
-      }
-    );
+    mockCanvas.toBlob.mockImplementation((cb: (blob: Blob | null) => void) => {
+      cb(null);
+    });
 
     const promise = svgToPngBlob(svgString);
     mockImage.onload();
@@ -131,6 +125,6 @@ describe("svgToPngBlob", () => {
 
   it("should encode SVG as base64 data URL", () => {
     svgToPngBlob("<svg><text>Hello</text></svg>");
-    expect(mockImage.src).toMatch(/^data:image\/svg\+xml;base64,/);
+    expect(mockImage.src).toMatch(BASE64_SVG_DATA_URL_REGEX);
   });
 });

@@ -1,20 +1,20 @@
-import { act, fireEvent, render, waitFor } from "@testing-library/react";
+import { act, fireEvent, render } from "@testing-library/react";
 import rehypeParse from "rehype-parse";
 import rehypeStringify from "rehype-stringify";
 import { unified } from "unified";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { StreamdownContext } from "../index";
+import { createAnimatePlugin } from "../lib/animate";
 import { CodeBlock } from "../lib/code-block";
 import { CodeBlockCopyButton } from "../lib/code-block/copy-button";
 import { HighlightedCodeBlockBody } from "../lib/code-block/highlighted-body";
 import { components as importedComponents } from "../lib/components";
+import type { Options } from "../lib/markdown";
 import { Markdown } from "../lib/markdown";
 import { PluginContext } from "../lib/plugin-context";
-import type { Options } from "../lib/markdown";
-import { createAnimatePlugin } from "../lib/animate";
 
 type RequiredComponents = Required<NonNullable<Options["components"]>>;
-const components = importedComponents as RequiredComponents;
+const _components = importedComponents as RequiredComponents;
 
 describe("components.tsx MemoParagraph", () => {
   it("should unwrap paragraph containing only an image", () => {
@@ -27,7 +27,7 @@ describe("components.tsx MemoParagraph", () => {
     );
 
     // Image should NOT be wrapped in a <p> tag
-    const p = result.container.querySelector("p");
+    const _p = result.container.querySelector("p");
     const imgWrapper = result.container.querySelector(
       '[data-streamdown="image-wrapper"]'
     );
@@ -120,9 +120,7 @@ describe("HighlightedCodeBlockBody cachedResult path", () => {
     );
 
     // Should show cached result
-    const body = container.querySelector(
-      '[data-streamdown="code-block-body"]'
-    );
+    const body = container.querySelector('[data-streamdown="code-block-body"]');
     expect(body).toBeTruthy();
     expect(body?.textContent).toContain("cached");
   });
@@ -155,9 +153,7 @@ describe("animate.ts remaining coverage", () => {
   it("should handle node not found in parent (index === -1)", async () => {
     // This is an edge case that's hard to trigger naturally
     // Just ensure the plugin doesn't crash on complex nested content
-    const result = await processHtml(
-      "<div><p>Hello</p><p>World</p></div>"
-    );
+    const result = await processHtml("<div><p>Hello</p><p>World</p></div>");
     expect(result).toContain("data-sd-animate");
   });
 });
@@ -228,7 +224,7 @@ describe("copy-button timeout", () => {
     });
   });
 
-  it("should auto-reset copied state after timeout via window.setTimeout", async () => {
+  it("should auto-reset copied state after timeout via window.setTimeout", () => {
     const { container } = render(
       <CodeBlock code="test code" language="text">
         <CodeBlockCopyButton timeout={500} />
@@ -239,7 +235,8 @@ describe("copy-button timeout", () => {
     expect(button).toBeTruthy();
 
     // Click copy
-    await act(async () => {
+    act(() => {
+      // biome-ignore lint/style/noNonNullAssertion: test assertion
       fireEvent.click(button!);
     });
 
@@ -299,7 +296,9 @@ describe("remark/escape-html guard clause", () => {
 describe("parse-blocks void elements", () => {
   it("should handle void elements in HTML blocks", async () => {
     const { parseMarkdownIntoBlocks } = await import("../lib/parse-blocks");
-    const result = parseMarkdownIntoBlocks("<div><br/><hr/><img src='x'/></div>");
+    const result = parseMarkdownIntoBlocks(
+      "<div><br/><hr/><img src='x'/></div>"
+    );
     expect(result.length).toBeGreaterThan(0);
   });
 });

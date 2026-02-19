@@ -1,4 +1,4 @@
-import { act, fireEvent, render, waitFor } from "@testing-library/react";
+import { fireEvent, render, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { StreamdownContext } from "../index";
 import { components as importedComponents } from "../lib/components";
@@ -36,10 +36,7 @@ describe("ImageComponent cached image handling", () => {
           mode: "streaming",
         }}
       >
-        <ImageComponent
-          src="https://example.com/cached.png"
-          alt="cached"
-        />
+        <ImageComponent alt="cached" src="https://example.com/cached.png" />
       </StreamdownContext.Provider>
     );
 
@@ -53,7 +50,9 @@ describe("ImageComponent cached image handling", () => {
     // Fire load event to trigger state update
     fireEvent.load(img);
 
-    const wrapper = container.querySelector('[data-streamdown="image-wrapper"]');
+    const wrapper = container.querySelector(
+      '[data-streamdown="image-wrapper"]'
+    );
     expect(wrapper).toBeTruthy();
   });
 
@@ -86,10 +85,7 @@ describe("ImageComponent cached image handling", () => {
           mode: "streaming",
         }}
       >
-        <ImageComponent
-          src="https://example.com/broken.png"
-          alt="broken"
-        />
+        <ImageComponent alt="broken" src="https://example.com/broken.png" />
       </StreamdownContext.Provider>
     );
 
@@ -102,7 +98,9 @@ describe("ImageComponent cached image handling", () => {
     // Fire error event
     fireEvent.error(img);
 
-    const fallback = container.querySelector('[data-streamdown="image-error"]');
+    const _fallback = container.querySelector(
+      '[data-streamdown="image-error"]'
+    );
     // The error state should be set
     expect(container).toBeTruthy();
   });
@@ -204,7 +202,7 @@ describe("PanZoom edge cases", () => {
     expect(contentEl).toBeTruthy();
 
     // Fire pointer move without a pointer down first (not panning)
-    fireEvent.pointerMove(contentEl!, {
+    fireEvent.pointerMove(contentEl as HTMLElement, {
       clientX: 100,
       clientY: 100,
     });
@@ -277,10 +275,12 @@ describe("TableDownloadDropdown error on save throw (line 78)", () => {
     );
 
     const toggleBtn = container.querySelector('button[title="Download table"]');
-    fireEvent.click(toggleBtn!);
+    fireEvent.click(toggleBtn as HTMLButtonElement);
 
-    const csvBtn = container.querySelector('button[title="Download table as CSV"]');
-    fireEvent.click(csvBtn!);
+    const csvBtn = container.querySelector(
+      'button[title="Download table as CSV"]'
+    );
+    fireEvent.click(csvBtn as HTMLButtonElement);
 
     expect(onError).toHaveBeenCalledWith(expect.any(Error));
   });
@@ -299,7 +299,9 @@ describe("components.tsx code extraction from ReactElement children (line 729)",
 
     // Wait for lazy-loaded CodeBlock
     await waitFor(() => {
-      const codeBlock = container.querySelector('[data-streamdown="code-block"]');
+      const codeBlock = container.querySelector(
+        '[data-streamdown="code-block"]'
+      );
       expect(codeBlock).toBeTruthy();
     });
   });

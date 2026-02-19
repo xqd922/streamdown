@@ -42,7 +42,9 @@ describe("PanZoom pointer interactions", () => {
       </PanZoom>
     );
 
-    const content = container.querySelector('[role="application"]') as HTMLElement;
+    const content = container.querySelector(
+      '[role="application"]'
+    ) as HTMLElement;
     content.setPointerCapture = vi.fn();
 
     fireEvent.pointerDown(content, {
@@ -82,7 +84,7 @@ describe("PanZoom pointer interactions", () => {
     });
 
     // Move pointer - dispatch native event on content element
-    await act(async () => {
+    act(() => {
       const moveEvent = new PointerEvent("pointermove", {
         clientX: 150,
         clientY: 120,
@@ -121,7 +123,7 @@ describe("PanZoom pointer interactions", () => {
     });
 
     // Pointer up
-    await act(async () => {
+    act(() => {
       const upEvent = new PointerEvent("pointerup", {
         clientX: 150,
         clientY: 120,
@@ -160,7 +162,7 @@ describe("PanZoom pointer interactions", () => {
     });
 
     // Cancel
-    await act(async () => {
+    act(() => {
       const cancelEvent = new PointerEvent("pointercancel", {
         bubbles: true,
         pointerId: 1,
@@ -174,7 +176,7 @@ describe("PanZoom pointer interactions", () => {
     });
   });
 
-  it("should prevent text selection while panning", async () => {
+  it("should prevent text selection while panning", () => {
     const { container } = render(
       <PanZoom>
         <div>Content</div>

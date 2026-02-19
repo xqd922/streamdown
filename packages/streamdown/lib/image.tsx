@@ -37,7 +37,7 @@ export const ImageComponent = ({
       setImageLoaded(loaded);
       setImageError(!loaded);
     }
-  }, [src]);
+  }, []);
 
   const handleLoad = useCallback<React.ReactEventHandler<HTMLImageElement>>(
     (event) => {
@@ -60,7 +60,9 @@ export const ImageComponent = ({
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: "Complex image download logic with multiple edge cases"
   const downloadImage = async () => {
     /* v8 ignore next */
-    if (!src) return;
+    if (!src) {
+      return;
+    }
 
     try {
       const response = await fetch(src);
@@ -118,8 +120,8 @@ export const ImageComponent = ({
     >
       {/** biome-ignore lint/performance/noImgElement: "streamdown is framework-agnostic" */}
       {/** biome-ignore lint/correctness/useImageSize: "unknown size" */}
+      {/** biome-ignore lint/a11y/noNoninteractiveElementInteractions: image overlay with intentional load/error handling */}
       <img
-        ref={imgRef}
         alt={alt}
         className={cn(
           "max-w-full rounded-lg",
@@ -127,14 +129,15 @@ export const ImageComponent = ({
           className
         )}
         data-streamdown="image"
-        src={src}
-        onLoad={handleLoad}
         onError={handleError}
+        onLoad={handleLoad}
+        ref={imgRef}
+        src={src}
         {...props}
       />
       {showFallback && (
         <span
-          className="text-xs text-muted-foreground italic"
+          className="text-muted-foreground text-xs italic"
           data-streamdown="image-fallback"
         >
           Image not available

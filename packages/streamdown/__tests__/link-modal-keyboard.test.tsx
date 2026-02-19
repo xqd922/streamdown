@@ -11,10 +11,10 @@ describe("LinkSafetyModal keyboard and interaction", () => {
     const onClose = vi.fn();
     const { container } = render(
       <LinkSafetyModal
-        url="https://example.com"
         isOpen={true}
         onClose={onClose}
         onConfirm={vi.fn()}
+        url="https://example.com"
       />
     );
 
@@ -23,6 +23,7 @@ describe("LinkSafetyModal keyboard and interaction", () => {
     );
     expect(backdrop).toBeTruthy();
 
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.keyDown(backdrop!, { key: "Escape" });
     expect(onClose).toHaveBeenCalled();
   });
@@ -31,16 +32,17 @@ describe("LinkSafetyModal keyboard and interaction", () => {
     const onClose = vi.fn();
     const { container } = render(
       <LinkSafetyModal
-        url="https://example.com"
         isOpen={true}
         onClose={onClose}
         onConfirm={vi.fn()}
+        url="https://example.com"
       />
     );
 
     const backdrop = container.querySelector(
       '[data-streamdown="link-safety-modal"]'
     );
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.keyDown(backdrop!, { key: "Enter" });
     // onClose should only have been called 0 times (not from keyDown)
     expect(onClose).not.toHaveBeenCalled();
@@ -50,16 +52,17 @@ describe("LinkSafetyModal keyboard and interaction", () => {
     const onClose = vi.fn();
     const { container } = render(
       <LinkSafetyModal
-        url="https://example.com"
         isOpen={true}
         onClose={onClose}
         onConfirm={vi.fn()}
+        url="https://example.com"
       />
     );
 
     // Click the inner content area (role=presentation)
     const innerContent = container.querySelector('[role="presentation"]');
     expect(innerContent).toBeTruthy();
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(innerContent!);
 
     // onClose should NOT be called because click is stopped
@@ -70,14 +73,15 @@ describe("LinkSafetyModal keyboard and interaction", () => {
     const onClose = vi.fn();
     const { container } = render(
       <LinkSafetyModal
-        url="https://example.com"
         isOpen={true}
         onClose={onClose}
         onConfirm={vi.fn()}
+        url="https://example.com"
       />
     );
 
     const innerContent = container.querySelector('[role="presentation"]');
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.keyDown(innerContent!, { key: "Escape" });
 
     // onClose should NOT be called because keydown is stopped
@@ -87,10 +91,10 @@ describe("LinkSafetyModal keyboard and interaction", () => {
   it("should return null when not open", () => {
     const { container } = render(
       <LinkSafetyModal
-        url="https://example.com"
         isOpen={false}
         onClose={vi.fn()}
         onConfirm={vi.fn()}
+        url="https://example.com"
       />
     );
 
@@ -102,10 +106,10 @@ describe("LinkSafetyModal keyboard and interaction", () => {
   it("should lock body scroll when opened", () => {
     render(
       <LinkSafetyModal
-        url="https://example.com"
         isOpen={true}
         onClose={vi.fn()}
         onConfirm={vi.fn()}
+        url="https://example.com"
       />
     );
 
@@ -115,10 +119,10 @@ describe("LinkSafetyModal keyboard and interaction", () => {
   it("should unlock body scroll when closed", () => {
     const { unmount } = render(
       <LinkSafetyModal
-        url="https://example.com"
         isOpen={true}
         onClose={vi.fn()}
         onConfirm={vi.fn()}
+        url="https://example.com"
       />
     );
 
@@ -131,10 +135,10 @@ describe("LinkSafetyModal keyboard and interaction", () => {
     const onConfirm = vi.fn();
     const { container } = render(
       <LinkSafetyModal
-        url="https://example.com"
         isOpen={true}
         onClose={onClose}
         onConfirm={onConfirm}
+        url="https://example.com"
       />
     );
 
@@ -143,6 +147,7 @@ describe("LinkSafetyModal keyboard and interaction", () => {
       btn.textContent?.includes("Open link")
     );
     expect(openButton).toBeTruthy();
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(openButton!);
 
     expect(onConfirm).toHaveBeenCalled();
@@ -161,10 +166,10 @@ describe("LinkSafetyModal keyboard and interaction", () => {
 
     const { container } = render(
       <LinkSafetyModal
-        url="https://example.com"
         isOpen={true}
         onClose={vi.fn()}
         onConfirm={vi.fn()}
+        url="https://example.com"
       />
     );
 
@@ -175,6 +180,7 @@ describe("LinkSafetyModal keyboard and interaction", () => {
     expect(copyButton).toBeTruthy();
 
     // Should not throw
+    // biome-ignore lint/style/noNonNullAssertion: test assertion
     fireEvent.click(copyButton!);
 
     // Wait for async operation
@@ -186,13 +192,13 @@ describe("LinkSafetyModal keyboard and interaction", () => {
   });
 
   it("should show long URL with scrollable container", () => {
-    const longUrl = "https://example.com/" + "a".repeat(150);
+    const longUrl = `https://example.com/${"a".repeat(150)}`;
     const { container } = render(
       <LinkSafetyModal
-        url={longUrl}
         isOpen={true}
         onClose={vi.fn()}
         onConfirm={vi.fn()}
+        url={longUrl}
       />
     );
 
@@ -203,14 +209,14 @@ describe("LinkSafetyModal keyboard and interaction", () => {
     expect(urlDisplay?.className).toContain("overflow-y-auto");
   });
 
-  it("should close via document Escape keydown listener", async () => {
+  it("should close via document Escape keydown listener", () => {
     const onClose = vi.fn();
     render(
       <LinkSafetyModal
-        url="https://example.com"
         isOpen={true}
         onClose={onClose}
         onConfirm={vi.fn()}
+        url="https://example.com"
       />
     );
 

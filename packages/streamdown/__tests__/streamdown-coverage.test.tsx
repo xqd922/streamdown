@@ -1,11 +1,15 @@
 import { render, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { Block, Streamdown, normalizeHtmlIndentation } from "../index";
+import { Block, normalizeHtmlIndentation, Streamdown } from "../index";
+
+const INDENTED_DIV_REGEX = /^ {4,}<div>/m;
 
 // Mock the dependencies
 vi.mock("../lib/markdown", () => ({
   Markdown: ({ children, ...props }: any) => {
-    if (!children) return null;
+    if (!children) {
+      return null;
+    }
     return (
       <div data-testid="markdown" {...props}>
         {children}
@@ -61,7 +65,9 @@ describe("Streamdown animated paths", () => {
     );
 
     const wrapper = container.firstElementChild as HTMLElement;
-    expect(wrapper?.style.getPropertyValue("--streamdown-caret")).toContain("▋");
+    expect(wrapper?.style.getPropertyValue("--streamdown-caret")).toContain(
+      "▋"
+    );
   });
 
   it("should show empty span when no blocks and caret is active", () => {
@@ -84,9 +90,7 @@ describe("Streamdown animated paths", () => {
     );
 
     const wrapper = container.firstElementChild as HTMLElement;
-    expect(
-      wrapper?.style.getPropertyValue("--streamdown-caret")
-    ).toBeFalsy();
+    expect(wrapper?.style.getPropertyValue("--streamdown-caret")).toBeFalsy();
   });
 });
 
@@ -108,9 +112,7 @@ describe("Streamdown mode transitions", () => {
     );
 
     // Update children in streaming mode - triggers the useTransition path
-    rerender(
-      <Streamdown mode="streaming">First\n\nSecond block</Streamdown>
-    );
+    rerender(<Streamdown mode="streaming">First\n\nSecond block</Streamdown>);
 
     await waitFor(() => {
       const wrapper = container.firstElementChild;
@@ -134,7 +136,7 @@ describe("Streamdown allowedTags", () => {
   it("should extend sanitization schema with allowed tags", () => {
     const { container } = render(
       <Streamdown allowedTags={{ "custom-tag": ["class", "id"] }}>
-        {"<custom-tag class=\"test\">Hello</custom-tag>"}
+        {'<custom-tag class="test">Hello</custom-tag>'}
       </Streamdown>
     );
 
@@ -147,10 +149,10 @@ describe("Block component", () => {
     const { container } = render(
       <Block
         content={"    <div>\n        <p>Hello</p>\n    </div>"}
-        shouldParseIncompleteMarkdown={false}
-        shouldNormalizeHtmlIndentation={true}
         index={0}
         isIncomplete={false}
+        shouldNormalizeHtmlIndentation={true}
+        shouldParseIncompleteMarkdown={false}
       />
     );
 
@@ -161,10 +163,10 @@ describe("Block component", () => {
     const { container } = render(
       <Block
         content="**bold**"
-        shouldParseIncompleteMarkdown={false}
-        shouldNormalizeHtmlIndentation={false}
         index={0}
         isIncomplete={false}
+        shouldNormalizeHtmlIndentation={false}
+        shouldParseIncompleteMarkdown={false}
       />
     );
 
@@ -177,20 +179,20 @@ describe("Block memoization", () => {
     const { container, rerender } = render(
       <Block
         content="first"
-        shouldParseIncompleteMarkdown={false}
-        shouldNormalizeHtmlIndentation={false}
         index={0}
         isIncomplete={false}
+        shouldNormalizeHtmlIndentation={false}
+        shouldParseIncompleteMarkdown={false}
       />
     );
 
     rerender(
       <Block
         content="second"
-        shouldParseIncompleteMarkdown={false}
-        shouldNormalizeHtmlIndentation={false}
         index={0}
         isIncomplete={false}
+        shouldNormalizeHtmlIndentation={false}
+        shouldParseIncompleteMarkdown={false}
       />
     );
 
@@ -201,20 +203,20 @@ describe("Block memoization", () => {
     const { rerender, container } = render(
       <Block
         content="test"
-        shouldParseIncompleteMarkdown={false}
-        shouldNormalizeHtmlIndentation={false}
         index={0}
         isIncomplete={false}
+        shouldNormalizeHtmlIndentation={false}
+        shouldParseIncompleteMarkdown={false}
       />
     );
 
     rerender(
       <Block
         content="test"
-        shouldParseIncompleteMarkdown={false}
-        shouldNormalizeHtmlIndentation={true}
         index={0}
         isIncomplete={false}
+        shouldNormalizeHtmlIndentation={true}
+        shouldParseIncompleteMarkdown={false}
       />
     );
 
@@ -225,20 +227,20 @@ describe("Block memoization", () => {
     const { rerender, container } = render(
       <Block
         content="test"
-        shouldParseIncompleteMarkdown={false}
-        shouldNormalizeHtmlIndentation={false}
         index={0}
         isIncomplete={false}
+        shouldNormalizeHtmlIndentation={false}
+        shouldParseIncompleteMarkdown={false}
       />
     );
 
     rerender(
       <Block
         content="test"
-        shouldParseIncompleteMarkdown={false}
-        shouldNormalizeHtmlIndentation={false}
         index={1}
         isIncomplete={false}
+        shouldNormalizeHtmlIndentation={false}
+        shouldParseIncompleteMarkdown={false}
       />
     );
 
@@ -249,20 +251,20 @@ describe("Block memoization", () => {
     const { rerender, container } = render(
       <Block
         content="test"
-        shouldParseIncompleteMarkdown={false}
-        shouldNormalizeHtmlIndentation={false}
         index={0}
         isIncomplete={false}
+        shouldNormalizeHtmlIndentation={false}
+        shouldParseIncompleteMarkdown={false}
       />
     );
 
     rerender(
       <Block
         content="test"
-        shouldParseIncompleteMarkdown={false}
-        shouldNormalizeHtmlIndentation={false}
         index={0}
         isIncomplete={true}
+        shouldNormalizeHtmlIndentation={false}
+        shouldParseIncompleteMarkdown={false}
       />
     );
 
@@ -275,23 +277,23 @@ describe("Block memoization", () => {
 
     const { rerender, container } = render(
       <Block
+        components={comp1}
         content="test"
-        shouldParseIncompleteMarkdown={false}
-        shouldNormalizeHtmlIndentation={false}
         index={0}
         isIncomplete={false}
-        components={comp1}
+        shouldNormalizeHtmlIndentation={false}
+        shouldParseIncompleteMarkdown={false}
       />
     );
 
     rerender(
       <Block
+        components={comp2}
         content="test"
-        shouldParseIncompleteMarkdown={false}
-        shouldNormalizeHtmlIndentation={false}
         index={0}
         isIncomplete={false}
-        components={comp2}
+        shouldNormalizeHtmlIndentation={false}
+        shouldParseIncompleteMarkdown={false}
       />
     );
 
@@ -304,23 +306,23 @@ describe("Block memoization", () => {
 
     const { rerender, container } = render(
       <Block
+        components={{ p: p1 }}
         content="test"
-        shouldParseIncompleteMarkdown={false}
-        shouldNormalizeHtmlIndentation={false}
         index={0}
         isIncomplete={false}
-        components={{ p: p1 }}
+        shouldNormalizeHtmlIndentation={false}
+        shouldParseIncompleteMarkdown={false}
       />
     );
 
     rerender(
       <Block
+        components={{ p: p2 }}
         content="test"
-        shouldParseIncompleteMarkdown={false}
-        shouldNormalizeHtmlIndentation={false}
         index={0}
         isIncomplete={false}
-        components={{ p: p2 }}
+        shouldNormalizeHtmlIndentation={false}
+        shouldParseIncompleteMarkdown={false}
       />
     );
 
@@ -328,28 +330,39 @@ describe("Block memoization", () => {
   });
 
   it("should re-render when rehypePlugins change", () => {
-    const plugins1 = [() => {}];
-    const plugins2 = [() => {}, () => {}];
+    const plugins1 = [
+      () => {
+        // noop
+      },
+    ];
+    const plugins2 = [
+      () => {
+        // noop
+      },
+      () => {
+        // noop
+      },
+    ];
 
     const { rerender, container } = render(
       <Block
         content="test"
-        shouldParseIncompleteMarkdown={false}
-        shouldNormalizeHtmlIndentation={false}
         index={0}
         isIncomplete={false}
         rehypePlugins={plugins1}
+        shouldNormalizeHtmlIndentation={false}
+        shouldParseIncompleteMarkdown={false}
       />
     );
 
     rerender(
       <Block
         content="test"
-        shouldParseIncompleteMarkdown={false}
-        shouldNormalizeHtmlIndentation={false}
         index={0}
         isIncomplete={false}
         rehypePlugins={plugins2}
+        shouldNormalizeHtmlIndentation={false}
+        shouldParseIncompleteMarkdown={false}
       />
     );
 
@@ -357,28 +370,39 @@ describe("Block memoization", () => {
   });
 
   it("should re-render when remarkPlugins change", () => {
-    const plugins1 = [() => {}];
-    const plugins2 = [() => {}, () => {}];
+    const plugins1 = [
+      () => {
+        // noop
+      },
+    ];
+    const plugins2 = [
+      () => {
+        // noop
+      },
+      () => {
+        // noop
+      },
+    ];
 
     const { rerender, container } = render(
       <Block
         content="test"
-        shouldParseIncompleteMarkdown={false}
-        shouldNormalizeHtmlIndentation={false}
         index={0}
         isIncomplete={false}
         remarkPlugins={plugins1}
+        shouldNormalizeHtmlIndentation={false}
+        shouldParseIncompleteMarkdown={false}
       />
     );
 
     rerender(
       <Block
         content="test"
-        shouldParseIncompleteMarkdown={false}
-        shouldNormalizeHtmlIndentation={false}
         index={0}
         isIncomplete={false}
         remarkPlugins={plugins2}
+        shouldNormalizeHtmlIndentation={false}
+        shouldParseIncompleteMarkdown={false}
       />
     );
 
@@ -389,9 +413,7 @@ describe("Block memoization", () => {
 describe("Streamdown memoization", () => {
   it("should re-render when shikiTheme changes", () => {
     const { rerender, container } = render(
-      <Streamdown shikiTheme={["github-light", "github-dark"]}>
-        Test
-      </Streamdown>
+      <Streamdown shikiTheme={["github-light", "github-dark"]}>Test</Streamdown>
     );
 
     rerender(
@@ -416,9 +438,7 @@ describe("Streamdown memoization", () => {
       <Streamdown linkSafety={{ enabled: false }}>Test</Streamdown>
     );
 
-    rerender(
-      <Streamdown linkSafety={{ enabled: true }}>Test</Streamdown>
-    );
+    rerender(<Streamdown linkSafety={{ enabled: true }}>Test</Streamdown>);
 
     expect(container.firstElementChild).toBeTruthy();
   });
@@ -428,9 +448,7 @@ describe("Streamdown memoization", () => {
       <Streamdown normalizeHtmlIndentation={false}>Test</Streamdown>
     );
 
-    rerender(
-      <Streamdown normalizeHtmlIndentation={true}>Test</Streamdown>
-    );
+    rerender(<Streamdown normalizeHtmlIndentation={true}>Test</Streamdown>);
 
     expect(container.firstElementChild).toBeTruthy();
   });
@@ -448,6 +466,6 @@ describe("normalizeHtmlIndentation", () => {
   it("should normalize indented HTML tags", () => {
     const input = "    <div>\n        <p>Hello</p>\n    </div>";
     const result = normalizeHtmlIndentation(input);
-    expect(result).not.toMatch(/^ {4,}<div>/m);
+    expect(result).not.toMatch(INDENTED_DIV_REGEX);
   });
 });

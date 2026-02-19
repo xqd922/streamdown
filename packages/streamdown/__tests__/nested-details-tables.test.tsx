@@ -79,21 +79,19 @@ Outer content
 
 </details>`;
 
-      const { container } = render(
-        <Streamdown>{markdown}</Streamdown>
-      );
+      const { container } = render(<Streamdown>{markdown}</Streamdown>);
 
       const outer = container.querySelector("details");
       expect(outer).toBeTruthy();
-      expect(
-        outer?.querySelector(":scope > summary")?.textContent
-      ).toBe("Outer");
+      expect(outer?.querySelector(":scope > summary")?.textContent).toBe(
+        "Outer"
+      );
 
       const inner = outer?.querySelector("details");
       expect(inner).toBeTruthy();
-      expect(
-        inner?.querySelector(":scope > summary")?.textContent
-      ).toBe("Inner");
+      expect(inner?.querySelector(":scope > summary")?.textContent).toBe(
+        "Inner"
+      );
 
       expect(outer?.textContent).toContain("Outer content");
       expect(outer?.textContent).toContain("Inner content");
@@ -118,9 +116,7 @@ Inner content
 
 </details>`;
 
-      const { container } = render(
-        <Streamdown>{markdown}</Streamdown>
-      );
+      const { container } = render(<Streamdown>{markdown}</Streamdown>);
 
       const outer = container.querySelector("details");
       expect(outer).toBeTruthy();
@@ -150,18 +146,16 @@ Nested content
 
 After`;
 
-      const { container } = render(
-        <Streamdown>{markdown}</Streamdown>
-      );
+      const { container } = render(<Streamdown>{markdown}</Streamdown>);
 
       const allDetails = container.querySelectorAll("details");
       const topLevel = [...allDetails].filter(
         (d) => !d.parentElement?.closest("details")
       );
       expect(topLevel.length).toBe(1);
-      expect(
-        topLevel[0].querySelector(":scope > summary")?.textContent
-      ).toBe("Top");
+      expect(topLevel[0].querySelector(":scope > summary")?.textContent).toBe(
+        "Top"
+      );
     });
   });
 });

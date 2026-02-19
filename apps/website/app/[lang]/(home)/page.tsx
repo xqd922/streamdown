@@ -11,6 +11,9 @@ import { OneTwoSection } from "./components/one-two-section";
 import { Templates } from "./components/templates";
 import { TextGridSection } from "./components/text-grid-section";
 import { Usage } from "./components/usage";
+import AiElements from "./images/ai-elements.png";
+import NextjsChatbotTemplate from "./images/nextjs-chatbot-template.png";
+import VibeCodingPlatform from "./images/vibe-coding-platform.png";
 
 const title = "Streamdown";
 const description =
@@ -23,22 +26,24 @@ export const metadata: Metadata = {
 
 const templates = [
   {
-    title: "Template 1",
-    description: "Description of template 1",
-    link: "https://example.com/template-1",
-    image: "https://placehold.co/600x400.png",
+    title: "Next.js Chatbot Template",
+    description:
+      "A free, open-source template that helps you dive right into building powerful chatbot applications.",
+    link: "https://github.com/vercel/ai-chatbot",
+    image: NextjsChatbotTemplate,
   },
   {
-    title: "Template 2",
-    description: "Description of template 2",
-    link: "https://example.com/template-2",
-    image: "https://placehold.co/600x400.png",
+    title: "AI Elements",
+    description:
+      "A collection of UI elements for building AI-powered applications.",
+    link: "https://elements.ai-sdk.dev/",
+    image: AiElements,
   },
   {
-    title: "Template 3",
-    description: "Description of template 3",
-    link: "https://example.com/template-3",
-    image: "https://placehold.co/600x400.png",
+    title: "Vibe Coding Platform",
+    description: "An end to end text-to-app coding platform.",
+    link: "https://oss-vibe-coding-platform.vercel.app/",
+    image: VibeCodingPlatform,
   },
 ];
 
@@ -50,9 +55,8 @@ const features = [
     title: "Typography & GFM",
     description: (
       <>
-        Built-in{" "}
-        <Link href="/[lang]/docs/typography">Tailwind typography</Link> for
-        headings, lists, and code blocks.{" "}
+        Built-in <Link href="/[lang]/docs/typography">Tailwind typography</Link>{" "}
+        for headings, lists, and code blocks.{" "}
         <Link href="/[lang]/docs/gfm">GitHub Flavored Markdown</Link> adds
         tables, task lists, strikethrough, and autolinks.
       </>
@@ -89,8 +93,9 @@ const features = [
     description: (
       <>
         <Link href="/[lang]/docs/plugins/math">LaTeX math</Link> through KaTeX,
-        interactive <Link href="/[lang]/docs/plugins/mermaid">Mermaid diagrams</Link>{" "}
-        with fullscreen viewing, and{" "}
+        interactive{" "}
+        <Link href="/[lang]/docs/plugins/mermaid">Mermaid diagrams</Link> with
+        fullscreen viewing, and{" "}
         <Link href="/[lang]/docs/plugins/cjk">CJK support</Link> for correct
         ideographic punctuation.
       </>
@@ -117,8 +122,9 @@ const features = [
         <Link href="/[lang]/docs/components">custom components</Link>, apply
         your own <Link href="/[lang]/docs/styling">styles</Link>, and fine-tune
         behavior through{" "}
-        <Link href="/[lang]/docs/configuration">configuration</Link>. Tree-shakeable{" "}
-        <Link href="/[lang]/docs/plugins">plugins</Link> keep your bundle lean.
+        <Link href="/[lang]/docs/configuration">configuration</Link>.
+        Tree-shakeable <Link href="/[lang]/docs/plugins">plugins</Link> keep
+        your bundle lean.
       </>
     ),
   },

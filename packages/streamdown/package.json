@@ -66,7 +66,7 @@
     "hast-util-to-jsx-runtime": "^2.3.6",
     "html-url-attributes": "^3.0.1",
     "marked": "^17.0.1",
-    "rehype-harden": "^1.1.7",
+    "rehype-harden": "^1.1.8",
     "rehype-raw": "^7.0.0",
     "rehype-sanitize": "^6.0.0",
     "remark-gfm": "^4.0.1",

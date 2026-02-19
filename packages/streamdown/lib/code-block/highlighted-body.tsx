@@ -41,10 +41,7 @@ export const HighlightedCodeBlockBody = ({
 
     if (cachedResult) {
       setResult(cachedResult);
-      return;
     }
-
-    setResult(raw);
   }, [code, language, shikiTheme, codePlugin, raw]);
 
   return (

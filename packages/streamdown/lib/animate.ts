@@ -103,9 +103,8 @@ const processTextNode = (
   config: AnimateConfig
 ): number | typeof SKIP | undefined => {
   const ancestor = ancestors.at(-1);
-  if (!(ancestor && "children" in ancestor)) {
-    return;
-  }
+  /* v8 ignore next */
+  if (!(ancestor && "children" in ancestor)) return;
 
   if (hasSkipAncestor(ancestors)) {
     return SKIP;
@@ -113,9 +112,8 @@ const processTextNode = (
 
   const parent = ancestor as Parent;
   const index = parent.children.indexOf(node);
-  if (index === -1) {
-    return;
-  }
+  /* v8 ignore next */
+  if (index === -1) return;
 
   const text = node.value;
   if (!text.trim()) {

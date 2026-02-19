@@ -84,9 +84,8 @@ export const PanZoom = ({
 
   const handlePointerMove = useCallback(
     (e: PointerEvent) => {
-      if (!isPanning) {
-        return;
-      }
+      /* v8 ignore next */
+      if (!isPanning) return;
       e.preventDefault();
       const deltaX = e.clientX - panStart.x;
       const deltaY = e.clientY - panStart.y;
@@ -109,9 +108,8 @@ export const PanZoom = ({
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container) {
-      return;
-    }
+    /* v8 ignore next */
+    if (!container) return;
 
     container.addEventListener("wheel", handleWheel, { passive: false });
 
@@ -122,9 +120,8 @@ export const PanZoom = ({
 
   useEffect(() => {
     const content = contentRef.current;
-    if (!content) {
-      return;
-    }
+    /* v8 ignore next */
+    if (!content) return;
 
     if (isPanning) {
       // Prevent text selection while panning

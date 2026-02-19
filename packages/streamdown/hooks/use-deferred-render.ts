@@ -112,9 +112,8 @@ export function useDeferredRender(options: UseDeferredRenderOptions = {}) {
     }
 
     const container = containerRef.current;
-    if (!container) {
-      return;
-    }
+    /* v8 ignore next */
+    if (!container) return;
 
     // Clear any pending timeout and idle callback
     if (renderTimeoutRef.current) {

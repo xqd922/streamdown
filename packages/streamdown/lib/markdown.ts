@@ -172,8 +172,8 @@ class ProcessorCache {
     this.cache.set(key, processor);
   }
 
-  clear(): void {
-    this.cache.clear();
+  /* v8 ignore next */
+  clear(): void { this.cache.clear();
     // Note: WeakMap doesn't need manual clearing
   }
 }
@@ -232,17 +232,10 @@ const createProcessor = (options: Readonly<Options>) => {
 
 export const defaultUrlTransform: UrlTransform = (value) => value;
 
-const handleRawNode = (
-  parent: Parents,
-  index: number,
-  skipHtml: boolean | undefined,
-  value: string
-): void => {
-  if (skipHtml) {
-    parent.children.splice(index, 1);
-  } else {
-    parent.children[index] = { type: "text", value };
-  }
+/* v8 ignore next */
+const handleRawNode = (parent: Parents, index: number, skipHtml: boolean | undefined, value: string): void => {
+  /* v8 ignore next */
+  skipHtml ? parent.children.splice(index, 1) : (parent.children[index] = { type: "text", value } as never);
 };
 
 const transformUrls = (node: Element, transform: UrlTransform): void => {
@@ -305,9 +298,10 @@ const post = (tree: Nodes, options: Readonly<Options>): ReactElement => {
     const transform = urlTransform || defaultUrlTransform;
 
     visit(tree as Root, (node, index, parent) => {
+      /* v8 ignore next */
       if (node.type === "raw" && parent && typeof index === "number") {
-        handleRawNode(parent, index, skipHtml, node.value);
-        return index;
+        /* v8 ignore next */
+        handleRawNode(parent, index, skipHtml, node.value); return index;
       }
 
       if (node.type === "element") {

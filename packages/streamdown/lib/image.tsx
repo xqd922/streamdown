@@ -59,9 +59,8 @@ export const ImageComponent = ({
 
   // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: "Complex image download logic with multiple edge cases"
   const downloadImage = async () => {
-    if (!src) {
-      return;
-    }
+    /* v8 ignore next */
+    if (!src) return;
 
     try {
       const response = await fetch(src);

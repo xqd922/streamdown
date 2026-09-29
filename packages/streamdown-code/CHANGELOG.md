@@ -1,5 +1,15 @@
 # @streamdown/code
 
+## 2.0.0
+
+### Major Changes
+
+- db6fefc: Upgrade Shiki to v4. Node.js 20 or newer is now required when using `@streamdown/code`.
+
+### Patch Changes
+
+- 0ea9e64: Tokenize only the new lines of a code block while it streams instead of re-tokenizing the whole block on every update.
+
 ## 1.1.1
 
 ### Patch Changes
